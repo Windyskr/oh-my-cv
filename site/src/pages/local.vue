@@ -24,13 +24,7 @@
       class="local-sync-status flex items-center gap-3 px-4 py-2 text-sm"
       role="status"
     >
-      <span>{{
-        state.saving
-          ? "正在保存…"
-          : dirty && !state.conflict
-            ? "有未保存的修改 · 点击保存或按 Ctrl+S"
-            : state.message
-      }}</span>
+      <span>{{ saveStatus }}</span>
       <UiButton v-if="state.conflict" variant="outline" size="sm" @click="useFiles">
         使用文件内容
       </UiButton>
@@ -70,21 +64,71 @@
 
 <script lang="ts" setup>
 import type { LocalResume } from "~/composables/localResume";
+import { onBeforeRouteLeave } from "vue-router";
 
 const { data, setData } = useDataStore();
-const { state, dirty, apply } = useLocalResume();
+const { state, content, dirty, matches, apply, save } = useLocalResume();
 const { width } = useWindowSize();
 const isToolbarOpen = ref(width.value > 1024);
 let active = false;
 let timer: ReturnType<typeof setTimeout>;
+let saveTimer: ReturnType<typeof setTimeout>;
+let retryDelay = 2000;
+
+const saveStatus = computed(() => {
+  if (state.value.conflict || state.value.failed) return state.value.message;
+  if (state.value.applying) return "正在同步文件…";
+  if (state.value.saving || dirty.value) return "正在自动保存…";
+  return state.value.message;
+});
+
+const autoSave = async () => {
+  if (!active || !dirty.value || state.value.applying || state.value.conflict) return;
+  const saved = await save();
+  if (saved) retryDelay = 2000;
+  else if (active && dirty.value && state.value.failed && !state.value.conflict) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(autoSave, retryDelay);
+    retryDelay = Math.min(retryDelay * 2, 30000);
+  }
+};
+
+watch(
+  [
+    content,
+    () => state.value.baseline,
+    () => state.value.saving,
+    () => state.value.applying,
+    () => state.value.conflict
+  ],
+  () => {
+    clearTimeout(saveTimer);
+    if (
+      active &&
+      dirty.value &&
+      !state.value.saving &&
+      !state.value.applying &&
+      !state.value.conflict
+    ) {
+      saveTimer = setTimeout(autoSave, state.value.failed ? retryDelay : 500);
+    }
+  },
+  { flush: "post" }
+);
 
 const refresh = async () => {
   const startedRevision = state.value.revision;
   try {
     const resume = await $fetch<LocalResume>("/api/local-resume", { cache: "no-store" });
-    if (!active || state.value.saving || startedRevision !== state.value.revision) return;
+    if (
+      !active ||
+      state.value.saving ||
+      state.value.applying ||
+      startedRevision !== state.value.revision
+    )
+      return;
     if (resume.revision !== state.value.revision) {
-      if (dirty.value) {
+      if (dirty.value && !matches(resume)) {
         state.value.conflict = true;
         state.value.message =
           "本地文件也有修改。请导出当前编辑备份，再选择使用文件内容。";
@@ -116,7 +160,16 @@ const beforeUnload = (event: BeforeUnloadEvent) => {
   event.returnValue = "";
 };
 
-onBeforeRouteLeave(() => {
+const saveWhenHidden = () => {
+  if (document.visibilityState === "hidden") {
+    clearTimeout(saveTimer);
+    void autoSave();
+  }
+};
+
+onBeforeRouteLeave(async () => {
+  clearTimeout(saveTimer);
+  await save();
   if (dirty.value) return window.confirm("当前修改尚未保存。是否离开页面？");
 });
 
@@ -125,15 +178,20 @@ onMounted(() => {
   state.value.revision = "";
   state.value.baseline = "";
   state.value.conflict = false;
+  state.value.failed = false;
+  state.value.message = "正在读取本地简历…";
   active = true;
   window.addEventListener("beforeunload", beforeUnload);
+  document.addEventListener("visibilitychange", saveWhenHidden);
   refresh();
 });
 
 onBeforeUnmount(() => {
   active = false;
   clearTimeout(timer);
+  clearTimeout(saveTimer);
   window.removeEventListener("beforeunload", beforeUnload);
+  document.removeEventListener("visibilitychange", saveWhenHidden);
 });
 </script>
 
