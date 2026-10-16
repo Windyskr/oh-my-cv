@@ -3,8 +3,14 @@
   "version": "0.1.1",
   "private": true,
   "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "type": "module",
   "scripts": {
+    "start": "node scripts/start-local.mjs",
+    "build:local": "node scripts/start-local.mjs --build-only",
+    "export:pdf": "node scripts/export-pdf.mjs",
     "build": "pnpm --filter=site build",
     "build:pkg": "pnpm -r --stream build:pkg",
     "build-fast:pkg": "pnpm -r --stream build-fast:pkg",

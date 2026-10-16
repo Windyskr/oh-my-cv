@@ -16,8 +16,14 @@ import { useShortcuts } from "@ohmycv/vue-shortcuts";
 
 const { data } = useDataStore();
 const { styles } = useStyleStore();
+const route = useRoute();
+const localResume = useLocalResume();
 
 const save = async () => {
+  if (route.path.replace(/\/$/, "").endsWith("/local")) {
+    await localResume.save();
+    return;
+  }
   if (!data.resumeId) return;
 
   await storageService.updateResume({

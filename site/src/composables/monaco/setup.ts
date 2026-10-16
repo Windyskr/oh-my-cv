@@ -1,4 +1,4 @@
-import type * as Monaco from "monaco-editor";
+import type * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
 declare global {
   interface Window {
@@ -25,8 +25,7 @@ export const setupMonaco = async () => {
     };
   }
 
-  // Import manaco
-  const monaco = await import("monaco-editor");
+  const monaco = await import("./editor");
   window.monaco = monaco;
 
   // Import editor and css workers

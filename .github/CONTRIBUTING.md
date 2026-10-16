@@ -19,7 +19,7 @@ This is a monorepo based on a [pnpm workspace](https://pnpm.io/workspaces):
 
 ## Development Setup
 
-This app is deployed with [Node.js](https://nodejs.org/) version 20+ and [pnpm](https://pnpm.io/) version 9+.
+This app requires [Node.js](https://nodejs.org/) version 22.12+ and [pnpm](https://pnpm.io/) version 9+.
 
 It is built on [Nuxt 3](https://nuxt.com), with the power of [Vue 3](https://github.com/vuejs/vue-next), [Vite](https://github.com/vitejs/vite), [Radix Vue](https://www.radix-vue.com/), [Zag](https://zagjs.com/), and [UnoCSS](https://github.com/antfu/unocss).
 

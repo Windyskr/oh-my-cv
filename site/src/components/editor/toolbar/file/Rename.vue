@@ -16,9 +16,15 @@
 
 <script lang="ts" setup>
 const { data } = useDataStore();
+const route = useRoute();
 
 const rename = async (text?: string) => {
-  if (!text || !data.resumeId) return;
+  if (!text) return;
+  if (route.path.replace(/\/$/, "").endsWith("/local")) {
+    data.resumeName = text;
+    return;
+  }
+  if (!data.resumeId) return;
 
   data.resumeName = text;
 

@@ -1,5 +1,13 @@
 <template>
-  <div class="resume-render" :id="`resume-${id}`" ref="target" />
+  <div
+    class="resume-render"
+    :id="`resume-${id}`"
+    ref="target"
+    :style="{
+      '--resume-margin-top': `${styles.marginV}px`,
+      '--resume-margin-left': `${styles.marginH}px`
+    }"
+  />
 </template>
 
 <script lang="ts" setup>

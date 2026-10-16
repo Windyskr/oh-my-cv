@@ -24,7 +24,7 @@ type ResumeFrontMatter = {
 };
 
 type MarkdownItPlugins = Array<
-  PluginSimple | PluginWithOptions | [PluginWithOptions, any]
+  PluginSimple | PluginWithOptions | [PluginWithOptions, unknown]
 >;
 
 type MarkdownServiceOptions = {
@@ -101,13 +101,29 @@ export class MarkdownService {
   }
 
   public renderHeader(frontMatter: ResumeFrontMatter) {
+    const header = frontMatter.header ?? [];
+    const isImage = (item: ResumeHeaderItem) =>
+      /<img\b[^>]*class=["'](?:university-logo|resume-photo)["'][^>]*>/i.test(
+        item.text
+      ) && item.text.replace(/<!--[\s\S]*?-->|<img\b[^>]*>/gi, "").trim() === "";
+    const images = header
+      .filter(isImage)
+      .map((item) => item.text)
+      .join("\n");
+    const details = header.filter((item) => !isImage(item));
     const content = [
+      images,
       frontMatter.name ? `<h1>${frontMatter.name}</h1>\n` : "",
-      (frontMatter.header ?? [])
-        .map((item, i, array) =>
-          this._renderHeaderItem(item, i !== array.length - 1 && !array[i + 1].newLine)
-        )
-        .join("\n")
+      '<div class="resume-header-details">' +
+        details
+          .map((item, i, array) =>
+            this._renderHeaderItem(
+              i === 0 && images ? { ...item, newLine: false } : item,
+              i !== array.length - 1 && !array[i + 1].newLine
+            )
+          )
+          .join("\n") +
+        "</div>"
     ].join("");
 
     return `<div class="resume-header">${content}</div>`;

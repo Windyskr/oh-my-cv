@@ -3,7 +3,6 @@ import {
   presetAttributify,
   presetIcons,
   presetUno,
-  presetWebFonts,
   transformerDirectives,
   transformerVariantGroup
 } from "unocss";
@@ -40,6 +39,9 @@ export default defineConfig({
     }
   ],
   theme: {
+    fontFamily: {
+      ui: 'Arial, "Microsoft YaHei", "PingFang SC", sans-serif'
+    },
     breakpoints: {
       sm: "641px",
       md: "769px",
@@ -56,11 +58,6 @@ export default defineConfig({
     presetIcons({
       extraProperties: {
         display: "inline-block"
-      }
-    }),
-    presetWebFonts({
-      fonts: {
-        ui: "Lato:400,700"
       }
     }),
     presetAnimations(),

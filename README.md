@@ -6,6 +6,8 @@ So, why not write it in Markdown?
 
 Have fun: [ohmycv.app](https://ohmycv.app/)
 
+For local file editing and background PDF export, see [Local usage](LOCAL-USAGE.md).
+
 
 &nbsp;
 

@@ -1,9 +1,19 @@
 import { pwa } from "./configs/pwa";
 import { i18n } from "./configs/i18n";
+import { fileURLToPath } from "node:url";
+
+const localBuild = process.env.RESUME_LOCAL_BUILD === "1";
+const localFeatures = localBuild || process.env.NODE_ENV !== "production";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   srcDir: "src/",
+  devtools: { enabled: false },
+  sourcemap: { server: false, client: false },
+
+  nitro: localBuild
+    ? { output: { dir: fileURLToPath(new URL("./.output-local", import.meta.url)) } }
+    : {},
 
   modules: [
     "@vueuse/nuxt",
@@ -31,7 +41,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    localFilesEnabled: localFeatures,
     public: {
+      localFeatures,
       googleFontsKey: ""
     }
   },
@@ -62,5 +74,6 @@ export default defineNuxtConfig({
     url: "https://ohmycv.app"
   },
 
-  pwa
+  sitemap: { enabled: !localFeatures },
+  pwa: { ...pwa, disable: localFeatures }
 });
