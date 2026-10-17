@@ -45,7 +45,10 @@ onMounted(async () => {
     if (!snapshot && historyId.value) {
       const version = await $fetch<HistoryVersion>(
         `/api/local-resume/history/${encodeURIComponent(historyId.value)}`,
-        { cache: "no-store" }
+        {
+          cache: "no-store",
+          query: route.query.resumeId ? { resumeId: route.query.resumeId } : undefined
+        }
       );
       snapshot = version.resume;
     }

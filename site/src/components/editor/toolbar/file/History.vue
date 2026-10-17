@@ -108,7 +108,7 @@
               v-else-if="selectedVersion"
               :key="selectedVersion.id"
               id="history-version-preview"
-              :src="`/pdf-render?history=${selectedVersion.id}`"
+              :src="previewUrl"
               :title="$t('history.preview')"
               class="w-full h-full min-h-80 border-0 bg-white"
             />
@@ -122,10 +122,9 @@
 <script lang="ts" setup>
 import type { HistoryEntry, HistoryList, HistoryVersion } from "~/types/resumeHistory";
 
-const route = useRoute();
 const { t, locale } = useI18n();
-const { state, save, restoreHistory } = useLocalResume();
-const isLocal = computed(() => route.path.replace(/\/$/, "").endsWith("/local"));
+const { state, save, restoreHistory, isFileEditor, endpoint } = useLocalResume();
+const isLocal = isFileEditor;
 const open = ref(false);
 const loading = ref(false);
 const snapshotLoading = ref(false);
@@ -141,6 +140,11 @@ const currentVersionId = computed(
 const total = ref(0);
 const nextBefore = ref<string | null>(null);
 const previewPane = ref<HTMLElement>();
+const previewUrl = computed(() =>
+  selectedVersion.value
+    ? `/pdf-render?history=${selectedVersion.value.id}${state.value.documentId ? `&resumeId=${state.value.documentId}` : ""}`
+    : ""
+);
 let selectionGeneration = 0;
 let listGeneration = 0;
 
@@ -163,7 +167,7 @@ const selectVersion = async (id: string) => {
   snapshotLoading.value = true;
   error.value = "";
   try {
-    const version = await $fetch<HistoryVersion>(`/api/local-resume/history/${id}`, {
+    const version = await $fetch<HistoryVersion>(endpoint(`/history/${id}`), {
       cache: "no-store"
     });
     if (!open.value || generation !== selectionGeneration) return;
@@ -183,7 +187,7 @@ const loadHistory = async (more = false) => {
   error.value = "";
   try {
     if (!more) await save();
-    const result = await $fetch<HistoryList>("/api/local-resume/history", {
+    const result = await $fetch<HistoryList>(endpoint("/history"), {
       query: more ? { before: nextBefore.value! } : undefined,
       cache: "no-store"
     });

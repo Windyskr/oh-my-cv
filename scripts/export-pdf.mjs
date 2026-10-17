@@ -32,7 +32,7 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
 
 const isReady = async (base) => {
   try {
-    const response = await fetch(`${base}/api/local-resume`, {
+    const response = await fetch(`${base}/api/resume-library`, {
       signal: AbortSignal.timeout(1500)
     });
     return (

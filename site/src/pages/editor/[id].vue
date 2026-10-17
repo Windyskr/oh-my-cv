@@ -20,7 +20,26 @@
       </template>
     </SharedHeader>
 
-    <div class="workspace flex pb-2">
+    <div
+      v-if="fileEditor"
+      class="local-sync-status flex flex-wrap items-center gap-3 px-4 py-2 text-sm"
+      role="status"
+    >
+      <span>{{ fileEditor.saveStatus.value }}</span>
+      <span
+        v-if="fileEditor.state.value.filePath"
+        class="text-xs text-muted-foreground break-all"
+        >文件目录：{{ fileEditor.state.value.filePath }}</span
+      >
+      <UiButton
+        v-if="fileEditor.state.value.conflict"
+        variant="outline"
+        size="sm"
+        @click="fileEditor.useFiles"
+        >使用文件内容</UiButton
+      >
+    </div>
+    <div class="workspace flex pb-2 min-h-0">
       <SplitterGroup id="splitter-editor" direction="horizontal" class="px-3">
         <SplitterPanel id="code-pane">
           <EditorCode v-if="data.loaded" />
@@ -59,8 +78,16 @@ import { isInteger } from "@renovamen/utils";
 const route = useRoute();
 const { data } = useDataStore();
 
-// Fetch resume data
+definePageMeta({ key: (route) => route.path });
+const fileEditor =
+  useRuntimeConfig().public.localFeatures &&
+  isInteger(route.params.id, { allowString: true }) &&
+  Number(route.params.id) > 0
+    ? useFileResumeEditor(Number(route.params.id))
+    : null;
+// Static deployments keep browser storage; local deployments edit the same files as agents.
 onMounted(() => {
+  if (fileEditor) return;
   if (isInteger(route.params.id, { allowString: true })) {
     storageService.switchToResume(Number(route.params.id));
   }
@@ -70,3 +97,11 @@ onMounted(() => {
 const { width } = useWindowSize();
 const isToolbarOpen = ref(width.value > 1024);
 </script>
+
+<style scoped>
+@media print {
+  .local-sync-status {
+    display: none;
+  }
+}
+</style>

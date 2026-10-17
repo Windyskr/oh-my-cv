@@ -6,13 +6,6 @@
       <div class="px-2 space-y-2" md="hstack justify-between">
         <h1 font-bold text-3xl>{{ $t("dashboard.my_resumes") }}</h1>
         <div class="flex gap-2">
-          <NuxtLink
-            v-if="localFeatures"
-            :to="$nuxt.$localePath('/local')"
-            class="px-4 py-2 rounded-md bg-primary text-primary-foreground"
-          >
-            本地简历
-          </NuxtLink>
           <DashboardFile @update="refresh" />
         </div>
       </div>
@@ -42,8 +35,6 @@
 
 <script lang="ts" setup>
 import type { DbResume } from "~/utils/storage";
-
-const localFeatures = useRuntimeConfig().public.localFeatures;
 
 const {
   data: resumes,

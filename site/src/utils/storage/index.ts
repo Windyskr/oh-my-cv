@@ -1,3 +1,5 @@
+import { isClient } from "@renovamen/utils";
+import { FileResumeDbService } from "./files";
 import { downloadFile } from "@renovamen/utils";
 import type { ValidVersion } from "~/composables/constant";
 import { LocalForageDbService } from "./localForage";
@@ -17,14 +19,25 @@ const AVAILABLE_SERVICES: Record<string, DbService> = {
 };
 
 export class StorageService {
-  private _db: DbService;
+  private _browser: DbService;
+  private _files: FileResumeDbService;
+  private get _db(): DbService {
+    return isClient && useRuntimeConfig().public.localFeatures
+      ? this._files
+      : this._browser;
+  }
+  public async initialize() {
+    if (isClient && useRuntimeConfig().public.localFeatures)
+      await this._files.initialize();
+  }
   private _version: ValidVersion;
 
   constructor(service: keyof typeof AVAILABLE_SERVICES) {
     const { VERSION } = useConstant();
 
     this._version = VERSION.CURRENT;
-    this._db = AVAILABLE_SERVICES[service];
+    this._browser = AVAILABLE_SERVICES[service];
+    this._files = new FileResumeDbService(this._browser);
   }
 
   private _createEmptyResume(): DbResumeEmpty {
@@ -150,10 +163,13 @@ export class StorageService {
   }
 
   public async exportToJSON() {
-    const data = (await this.getResumes()).reduce((acc, { id, ...resume }) => {
-      acc[id] = resume;
-      return acc;
-    }, {} as StorageJsonData);
+    const data = (await this.getResumes()).reduce(
+      (acc, { id, name, markdown, css, styles, created_at, updated_at }) => {
+        acc[id] = { name, markdown, css, styles, created_at, updated_at };
+        return acc;
+      },
+      {} as StorageJsonData
+    );
 
     const json: StorageJson = {
       version: this._version,

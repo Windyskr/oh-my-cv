@@ -16,11 +16,10 @@ import { useShortcuts } from "@ohmycv/vue-shortcuts";
 
 const { data } = useDataStore();
 const { styles } = useStyleStore();
-const route = useRoute();
 const localResume = useLocalResume();
 
 const save = async () => {
-  if (route.path.replace(/\/$/, "").endsWith("/local")) {
+  if (localResume.isFileEditor.value) {
     await localResume.save();
     return;
   }

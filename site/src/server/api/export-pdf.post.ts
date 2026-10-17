@@ -1,3 +1,5 @@
+import { activeLibraryResume } from "../utils/resumeLibrary";
+import { parseResumeId } from "../utils/localResumePaths";
 import { readLocalResume, withLocalResume } from "../utils/localResume";
 import { exportResumePdf } from "../utils/pdfExport";
 import { validateResume } from "../utils/validateResume";
@@ -10,7 +12,14 @@ export default defineEventHandler(async (event) => {
   }
   const body = await readBody(event);
   const snapshot =
-    body ?? (await withLocalResume(async () => (await readLocalResume()).resume));
+    body ??
+    (await withLocalResume(
+      async () =>
+        getQuery(event).resumeId === undefined
+          ? activeLibraryResume()
+          : (await readLocalResume()).resume,
+      parseResumeId(getQuery(event).resumeId)
+    ));
   const resume = validateResume(snapshot);
   // Nuxt's development proxy uses a Unix socket, so localPort may be absent.
   const port = event.node.req.socket.localPort || Number(getRequestURL(event).port || 80);

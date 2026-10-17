@@ -16,11 +16,11 @@
 
 <script lang="ts" setup>
 const { data } = useDataStore();
-const route = useRoute();
+const localResume = useLocalResume();
 
 const rename = async (text?: string) => {
   if (!text) return;
-  if (route.path.replace(/\/$/, "").endsWith("/local")) {
+  if (localResume.isFileEditor.value) {
     data.resumeName = text;
     return;
   }

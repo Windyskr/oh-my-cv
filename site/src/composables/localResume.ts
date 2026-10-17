@@ -5,12 +5,15 @@ import { until } from "@vueuse/core";
 
 export type LocalResume = DbResumeEmpty & {
   revision: string;
+  filePath?: string;
 };
 
 export const useLocalResume = () => {
   const { data, setData, setAndSyncToMonaco } = useDataStore();
   const { styles, setStyle } = useStyleStore();
   const state = useState("local-resume-sync", () => ({
+    documentId: null as number | null,
+    filePath: "",
     revision: "",
     baseline: "",
     saving: false,
@@ -20,6 +23,14 @@ export const useLocalResume = () => {
     conflict: false,
     message: "正在读取本地简历…"
   }));
+  const route = useRoute();
+  const isFileEditor = computed(
+    () =>
+      useRuntimeConfig().public.localFeatures &&
+      /\/(?:local|editor\/\d+)\/?$/.test(route.path)
+  );
+  const endpoint = (suffix = "") =>
+    `/api/local-resume${suffix}${state.value.documentId ? `?resumeId=${state.value.documentId}` : ""}`;
   const snapshot = () => ({
     name: data.resumeName,
     markdown: data.markdown,
@@ -48,7 +59,8 @@ export const useLocalResume = () => {
   const apply = async (resume: LocalResume) => {
     state.value.applying = true;
     try {
-      setData("resumeId", null);
+      setData("resumeId", state.value.documentId);
+      if (resume.filePath) state.value.filePath = resume.filePath;
       setData("resumeName", resume.name);
       setAndSyncToMonaco("markdown", resume.markdown);
       setAndSyncToMonaco("css", resume.css);
@@ -80,7 +92,7 @@ export const useLocalResume = () => {
     state.value.failed = false;
     const submitted = snapshot();
     try {
-      const saved = await $fetch<LocalResume>("/api/local-resume", {
+      const saved = await $fetch<LocalResume>(endpoint(), {
         method: "PUT",
         timeout: 15000,
         retry: false,
@@ -114,7 +126,7 @@ export const useLocalResume = () => {
     state.value.saving = true;
     state.value.restoring = true;
     try {
-      const restored = await $fetch<LocalResume>("/api/local-resume/history/restore", {
+      const restored = await $fetch<LocalResume>(endpoint("/history/restore"), {
         method: "POST",
         timeout: 15000,
         retry: false,
@@ -140,7 +152,7 @@ export const useLocalResume = () => {
     if (!(await save()) || state.value.conflict || state.value.applying) return false;
     state.value.saving = true;
     try {
-      const saved = await $fetch<LocalResume>("/api/local-resume", {
+      const saved = await $fetch<LocalResume>(endpoint(), {
         method: "PUT",
         timeout: 15000,
         retry: false,
@@ -161,5 +173,16 @@ export const useLocalResume = () => {
     }
   };
 
-  return { state, content, dirty, matches, apply, save, restoreHistory, importResume };
+  return {
+    state,
+    content,
+    dirty,
+    matches,
+    apply,
+    save,
+    restoreHistory,
+    importResume,
+    endpoint,
+    isFileEditor
+  };
 };

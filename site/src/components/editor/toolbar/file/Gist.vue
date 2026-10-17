@@ -236,11 +236,10 @@ import type { DbResumeEmpty } from "~/utils/storage/db";
 import { withOptionalLayoutStyles } from "~/utils/layoutSettings";
 
 const { t } = useI18n();
-const route = useRoute();
 const { data, setData, setAndSyncToMonaco } = useDataStore();
 const { styles, setStyle } = useStyleStore();
 const local = useLocalResume();
-const isLocal = computed(() => route.path.replace(/\/$/, "").endsWith("/local"));
+const isLocal = local.isFileEditor;
 const open = ref(false);
 const busy = ref(false);
 const error = ref("");

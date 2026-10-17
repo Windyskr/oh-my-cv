@@ -1,3 +1,4 @@
+import { parseResumeId } from "../../../utils/localResumePaths";
 import {
   readLocalResume,
   writeLocalResume,
@@ -16,14 +17,17 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Invalid restore request" });
   }
   setHeader(event, "Cache-Control", "no-store");
-  return withLocalResume(async () => {
-    const current = await readLocalResume();
-    if (current.revision !== body.revision)
-      throw createError({ statusCode: 409, statusMessage: "Local files have changed" });
-    const version = await readResumeHistory(body.id);
-    const resume = validateResume(version.resume);
-    await writeLocalResume(resume, current.json, "restore", version.id);
-    const saved = await readLocalResume();
-    return { ...saved.resume, revision: saved.revision };
-  });
+  return withLocalResume(
+    async () => {
+      const current = await readLocalResume();
+      if (current.revision !== body.revision)
+        throw createError({ statusCode: 409, statusMessage: "Local files have changed" });
+      const version = await readResumeHistory(body.id);
+      const resume = validateResume(version.resume);
+      await writeLocalResume(resume, current.json, "restore", version.id);
+      const saved = await readLocalResume();
+      return { ...saved.resume, revision: saved.revision };
+    },
+    parseResumeId(getQuery(event).resumeId)
+  );
 });

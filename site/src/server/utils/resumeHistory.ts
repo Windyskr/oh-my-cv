@@ -10,7 +10,7 @@ import {
 } from "node:fs/promises";
 import { resolve } from "node:path";
 import { randomUUID } from "node:crypto";
-import { localHistoryDirectory } from "./localResumePaths";
+import { getHistoryDirectory } from "./localResumePaths";
 import type { LocalResume } from "./localResume";
 import type {
   HistoryEntry,
@@ -19,12 +19,17 @@ import type {
   HistoryVersion
 } from "../../types/resumeHistory";
 
-const indexPath = resolve(localHistoryDirectory, "index.json");
-const snapshotsPath = resolve(localHistoryDirectory, "snapshots");
-let entries: HistoryEntry[] | undefined;
-let indexStamp = "";
+const indexPath = () => resolve(getHistoryDirectory(), "index.json");
+const snapshotsPath = () => resolve(getHistoryDirectory(), "snapshots");
+const caches = new Map<string, { entries?: HistoryEntry[]; stamp: string }>();
+const cache = () => {
+  const directory = getHistoryDirectory();
+  if (!caches.has(directory)) caches.set(directory, { stamp: "" });
+  return caches.get(directory)!;
+};
 
 const withHistoryLock = async <T>(action: () => Promise<T>): Promise<T> => {
+  const localHistoryDirectory = getHistoryDirectory();
   await mkdir(localHistoryDirectory, { recursive: true, mode: 0o700 });
   const lockPath = resolve(localHistoryDirectory, "write.lock");
   for (let attempt = 0; attempt < 200; attempt++) {
@@ -57,24 +62,25 @@ const withHistoryLock = async <T>(action: () => Promise<T>): Promise<T> => {
 };
 
 const loadEntries = async () => {
+  const state = cache();
   try {
-    const info = await stat(indexPath);
+    const info = await stat(indexPath());
     const stamp = `${info.ino}:${info.size}:${info.mtimeMs}`;
-    if (entries && stamp === indexStamp) return entries;
-    const index = JSON.parse(await readFile(indexPath, "utf8")) as {
+    if (state.entries && stamp === state.stamp) return state.entries;
+    const index = JSON.parse(await readFile(indexPath(), "utf8")) as {
       version: number;
       entries: HistoryEntry[];
     };
     if (index.version !== 1 || !Array.isArray(index.entries))
       throw new Error("Invalid history index");
-    entries = index.entries;
-    indexStamp = stamp;
+    state.entries = index.entries;
+    state.stamp = stamp;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-    entries = [];
-    indexStamp = "";
+    state.entries = [];
+    state.stamp = "";
   }
-  return entries;
+  return state.entries;
 };
 
 const atomicWrite = async (path: string, content: string) => {
@@ -85,7 +91,7 @@ const atomicWrite = async (path: string, content: string) => {
 
 const readSnapshot = async (revision: string): Promise<LocalResume> => {
   if (!/^[a-f0-9]{64}$/.test(revision)) throw new Error("Invalid history revision");
-  return JSON.parse(await readFile(resolve(snapshotsPath, `${revision}.json`), "utf8"));
+  return JSON.parse(await readFile(resolve(snapshotsPath(), `${revision}.json`), "utf8"));
 };
 
 // Called under withLocalResume so recording and restoring share the save queue.
@@ -100,8 +106,8 @@ export const recordResumeHistory = async (
   return withHistoryLock(async () => {
     const current = await loadEntries();
     if (current[0]?.revision === revision) return current[0];
-    await mkdir(snapshotsPath, { recursive: true, mode: 0o700 });
-    const snapshotPath = resolve(snapshotsPath, `${revision}.json`);
+    await mkdir(snapshotsPath(), { recursive: true, mode: 0o700 });
+    const snapshotPath = resolve(snapshotsPath(), `${revision}.json`);
     try {
       await access(snapshotPath);
     } catch (error) {
@@ -125,11 +131,11 @@ export const recordResumeHistory = async (
     };
     const next = [entry, ...current];
     await atomicWrite(
-      indexPath,
+      indexPath(),
       JSON.stringify({ version: 1, entries: next }, null, 2) + "\n"
     );
-    entries = next;
-    indexStamp = "";
+    cache().entries = next;
+    cache().stamp = "";
     return entry;
   });
 };
