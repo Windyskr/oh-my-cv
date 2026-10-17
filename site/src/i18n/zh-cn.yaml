@@ -154,10 +154,10 @@ history:
 gist:
   title: GitHub Gist 同步
   description: 同步当前简历的正文、CSS 和全部排版设置。
-  create_token: 在 GitHub 创建 Token
+  create_token: "打开 GitHub，创建访问令牌（Classic）"
   token_help: Classic Token 只需勾选 gist；Fine-grained Token 需要 Gists 读写权限。Token 仅发送给 GitHub。
-  remember: 在此浏览器记住 Token（以明文保存在浏览器本地）
-  address: Gist 地址或 ID
+  remember: "在此浏览器记住访问令牌"
+  address: "Gist 简历地址（首次上传可留空）"
   address_help: 首次上传留空会创建 Secret Gist；其他设备填写相同地址即可下载。
   secret_help: Secret Gist 持有链接即可访问，请妥善保管简历链接。同步不包含历史记录；图片需嵌入正文或使用可访问的图片地址。
   upload: 上传到 Gist
@@ -172,6 +172,38 @@ gist:
   cancel: 取消
   confirm_upload: 上传将覆盖这个 Gist 中的简历文件，是否继续？
   confirm_public_upload: 这是公开 Gist，上传后的简历任何人都可以查阅。是否继续上传？
+  access_title: "填写 GitHub 访问令牌"
+  token_step_name: "在 GitHub 的 Note 中填写 Oh My CV，并在 Expiration 中选择有效期。"
+  token_step_scope: "在 Select scopes 中只需勾选 gist；通过上方链接打开时会预先勾选。"
+  token_step_copy: "点击 Generate token，复制生成的 ghp_… 内容，粘贴到下方。"
+  token_label: "访问令牌 Token（上传时必填）"
+  token_placeholder: "粘贴 GitHub 生成的 ghp_… 令牌"
+  show_token: "显示访问令牌"
+  hide_token: "隐藏访问令牌"
+  token_persistent: "设置自动保存，无需另外点击保存。令牌以明文保存在此浏览器，仅发送给 GitHub。"
+  token_session: "Gist 地址会自动保存。令牌仅在当前网页中保留，刷新或关闭网页后需要重新填写。"
+  other_token: "已经有 Fine-grained Token？"
+  location_title: "设置简历保存地址"
+  first_device: "第一次使用："
+  first_device_help: "地址保持空白，点击下方“创建 Gist 并上传”。成功后会自动填入地址，无需提前创建 Gist。"
+  another_device: "在其他设备使用："
+  another_device_help: "从原设备复制 Gist 地址，粘贴到这里，再点击“从 Gist 下载”。"
+  address_placeholder: "https://gist.github.com/用户名/Gist编号"
+  address_invalid: "这里需要 gist.github.com 的网页地址或 Gist ID。请将访问令牌填写到上方 Token 输入框。"
+  copy_address: "复制地址"
+  copied: "已复制"
+  target_set: "后续上传和下载都会使用这个 Gist。可以复制地址到其他设备。"
+  target_new: "尚未指定地址，首次上传会自动创建一个 Secret Gist。"
+  action_title: "选择同步方向"
+  upload_direction: "当前简历 → GitHub"
+  upload_help: "使用当前编辑内容更新云端简历。"
+  create_help: "在你的 GitHub 账号下创建 Gist，并保存当前简历。"
+  create_upload: "创建 Gist 并上传"
+  upload_needs_token: "请先完成第 1 步，填写访问令牌。"
+  download_direction: "GitHub → 当前简历"
+  download_help: "读取云端简历，确认后替换当前编辑内容，并保留原内容备份。"
+  download_needs_address: "请先在第 2 步填写已有 Gist 地址。"
+  sync_notes: "同步内容与链接访问范围"
   errors:
     invalid_id: 请输入有效的 gist.github.com 地址或 Gist ID。
     token_required: 请填写具有 Gist 写入权限的 GitHub Token。
@@ -184,3 +216,4 @@ gist:
     missing_file: Gist 中没有 resume.ohmycv.json，请先通过本应用上传。
     local_save: 本地保存失败或存在文件冲突，请先处理保存状态，再重新同步。
     storage: 浏览器无法保存同步设置，重新打开页面后需要再次填写。
+    clipboard: "无法复制，请手动选中并复制 Gist 地址。"

@@ -154,10 +154,10 @@ history:
 gist:
   title: Sincronizar con GitHub Gist
   description: Sincroniza Markdown, CSS y todos los ajustes de formato del currículum.
-  create_token: Crear un token en GitHub
+  create_token: "Abrir GitHub para crear un token clásico"
   token_help: Los tokens clásicos necesitan el permiso gist; los tokens detallados necesitan lectura y escritura de Gists. El token solo se envía a GitHub.
-  remember: Recordar el token en este navegador (guardado localmente como texto sin cifrar)
-  address: URL o ID del Gist
+  remember: "Recordar el token de acceso en este navegador"
+  address: "URL del Gist (opcional en la primera subida)"
   address_help: Déjalo vacío para crear un Gist secreto. Usa la misma URL en otro dispositivo para descargarlo.
   secret_help: Cualquiera con el enlace puede acceder a un Gist secreto. Conserva el enlace con cuidado. El historial no se sincroniza; incorpora las imágenes o usa URL accesibles.
   upload: Subir a Gist
@@ -172,6 +172,38 @@ gist:
   cancel: Cancelar
   confirm_upload: Se sobrescribirá el archivo del currículum en este Gist. ¿Continuar?
   confirm_public_upload: Este Gist es público. Cualquiera podrá ver tu currículum. ¿Continuar?
+  access_title: "Introduce tu token de acceso de GitHub"
+  token_step_name: "En GitHub, escribe Oh My CV en Note y selecciona una fecha de Expiration."
+  token_step_scope: "En Select scopes, selecciona gist. El enlace anterior ya marca este permiso."
+  token_step_copy: "Pulsa Generate token, copia el valor ghp_… generado y pégalo abajo."
+  token_label: "Token de acceso (necesario para subir)"
+  token_placeholder: "Pega el token ghp_… generado por GitHub"
+  show_token: "Mostrar token de acceso"
+  hide_token: "Ocultar token de acceso"
+  token_persistent: "Los ajustes se guardan automáticamente. El token se guarda como texto sin cifrar en este navegador y solo se envía a GitHub."
+  token_session: "La URL del Gist se guarda automáticamente. El token solo permanece en esta página; introdúcelo de nuevo después de recargarla o cerrarla."
+  other_token: "¿Ya tienes un token detallado?"
+  location_title: "Elige dónde guardar el currículum"
+  first_device: "Primera vez:"
+  first_device_help: "Deja la URL vacía y pulsa Crear Gist y subir. La nueva URL se rellena automáticamente; no necesitas crear el Gist antes."
+  another_device: "En otro dispositivo:"
+  another_device_help: "Copia la URL del Gist del dispositivo original, pégala aquí y pulsa Descargar de Gist."
+  address_placeholder: "https://gist.github.com/usuario/id-del-gist"
+  address_invalid: "Introduce una URL de gist.github.com o un ID. Pega el token de acceso en el campo Token anterior."
+  copy_address: "Copiar URL"
+  copied: "Copiado"
+  target_set: "Las subidas y descargas usarán este Gist. Copia la URL a otro dispositivo."
+  target_new: "Sin URL seleccionada. La primera subida creará un Gist secreto automáticamente."
+  action_title: "Elige la dirección de sincronización"
+  upload_direction: "Currículum actual → GitHub"
+  upload_help: "Actualiza el currículum remoto con los cambios actuales."
+  create_help: "Crea un Gist en tu cuenta de GitHub y guarda el currículum actual."
+  create_upload: "Crear Gist y subir"
+  upload_needs_token: "Completa el paso 1 introduciendo un token de acceso."
+  download_direction: "GitHub → Currículum actual"
+  download_help: "Lee el currículum remoto y confirma el reemplazo. Se conserva una copia del contenido actual."
+  download_needs_address: "Introduce primero una URL de Gist en el paso 2."
+  sync_notes: "Contenido sincronizado y acceso mediante enlace"
   errors:
     invalid_id: Introduce una URL de gist.github.com o un ID válido.
     token_required: Introduce un token de GitHub con permiso de escritura de Gists.
@@ -184,3 +216,4 @@ gist:
     missing_file: No existe resume.ohmycv.json en este Gist. Súbelo desde esta aplicación.
     local_save: Falló el guardado o hay conflictos locales. Resuélvelos y vuelve a intentarlo.
     storage: El navegador no pudo guardar los ajustes. Introdúcelos de nuevo al recargar.
+    clipboard: "No se pudo copiar. Selecciona y copia la URL del Gist manualmente."
