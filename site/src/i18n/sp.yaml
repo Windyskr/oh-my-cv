@@ -156,7 +156,7 @@ gist:
   description: Sincroniza Markdown, CSS y todos los ajustes de formato del currículum.
   create_token: "Abrir GitHub para crear un token clásico"
   token_help: Los tokens clásicos necesitan el permiso gist; los tokens detallados necesitan lectura y escritura de Gists. El token solo se envía a GitHub.
-  remember: "Recordar el token de acceso en este navegador"
+  remember: "Recordar la configuración en este navegador"
   address: "URL del Gist (opcional en la primera subida)"
   address_help: Déjalo vacío para crear un Gist secreto. Usa la misma URL en otro dispositivo para descargarlo.
   secret_help: Cualquiera con el enlace puede acceder a un Gist secreto. Conserva el enlace con cuidado. El historial no se sincroniza; incorpora las imágenes o usa URL accesibles.
@@ -165,7 +165,7 @@ gist:
   forget: Borrar ajustes
   working: Sincronizando…
   open: Ver Gist en GitHub
-  uploaded: Currículum subido. Copia la URL para sincronizar en otro dispositivo.
+  uploaded: "Currículum subido. Copia y guarda el código para restaurar la configuración más adelante."
   downloaded: Currículum descargado y guardado.
   confirm_download: Se reemplazarán Markdown, CSS y formato. El modo local conserva el historial; el editor normal conserva una copia.
   replace: Reemplazar currículum actual
@@ -181,7 +181,7 @@ gist:
   show_token: "Mostrar token de acceso"
   hide_token: "Ocultar token de acceso"
   token_persistent: "Los ajustes se guardan automáticamente. El token se guarda como texto sin cifrar en este navegador y solo se envía a GitHub."
-  token_session: "La URL del Gist se guarda automáticamente. El token solo permanece en esta página; introdúcelo de nuevo después de recargarla o cerrarla."
+  token_session: "El PAT permanece solo en esta página de forma predeterminada. Tras recargar o cambiar de dispositivo, pega el código para restaurar la configuración."
   other_token: "¿Ya tienes un token detallado?"
   location_title: "Elige dónde guardar el currículum"
   first_device: "Primera vez:"
@@ -204,6 +204,23 @@ gist:
   download_help: "Lee el currículum remoto y confirma el reemplazo. Se conserva una copia del contenido actual."
   download_needs_address: "Introduce primero una URL de Gist en el paso 2."
   sync_notes: "Contenido sincronizado y acceso mediante enlace"
+  setup_mode: "Método de configuración"
+  mode_pat: "Primera vez: PAT"
+  mode_restore: "Restaurar con código"
+  pat_only_help: "Introduce solo tu PAT y pulsa Crear Gist y subir. Se generará un código para restaurar la configuración más adelante."
+  pat_help_title: "¿Cómo obtener un PAT con permiso gist?"
+  current_target: "Destino actual:"
+  legacy_setup: "Configuración anterior / Gist manual (opcional)"
+  restore_code_label: "Código de sincronización Base64"
+  restore_code_placeholder: "Pega el código Base64 guardado"
+  restore_code_help: "El código contiene el PAT y la URL del Gist. No necesitas introducirlos por separado. Confirma el reemplazo tras leer el currículum remoto."
+  restore_and_download: "Restaurar y leer currículum"
+  backup_code_title: "Guarda el código Base64"
+  backup_code_help: "Copia y guarda este único valor. En otro dispositivo o tras restablecer, elige Restaurar con código y pégalo."
+  show_sync_code: "Mostrar código"
+  hide_sync_code: "Ocultar código"
+  copy_sync_code: "Copiar código (incluye PAT)"
+  sync_code_privacy: "El código incluye tu PAT. Base64 es reversible; protégelo como un token de acceso. No se guarda en el currículum remoto."
   errors:
     invalid_id: Introduce una URL de gist.github.com o un ID válido.
     token_required: Introduce un token de GitHub con permiso de escritura de Gists.
@@ -216,4 +233,5 @@ gist:
     missing_file: No existe resume.ohmycv.json en este Gist. Súbelo desde esta aplicación.
     local_save: Falló el guardado o hay conflictos locales. Resuélvelos y vuelve a intentarlo.
     storage: El navegador no pudo guardar los ajustes. Introdúcelos de nuevo al recargar.
-    clipboard: "No se pudo copiar. Selecciona y copia la URL del Gist manualmente."
+    clipboard: "No se pudo copiar. Muestra el código y cópialo manualmente."
+    invalid_sync_code: "Código inválido o versión no compatible. Pega el código Base64 completo generado por esta aplicación. La configuración actual se conserva."

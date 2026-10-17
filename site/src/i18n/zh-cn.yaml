@@ -156,7 +156,7 @@ gist:
   description: 同步当前简历的正文、CSS 和全部排版设置。
   create_token: "打开 GitHub，创建访问令牌（Classic）"
   token_help: Classic Token 只需勾选 gist；Fine-grained Token 需要 Gists 读写权限。Token 仅发送给 GitHub。
-  remember: "在此浏览器记住访问令牌"
+  remember: "在此浏览器记住同步配置"
   address: "Gist 简历地址（首次上传可留空）"
   address_help: 首次上传留空会创建 Secret Gist；其他设备填写相同地址即可下载。
   secret_help: Secret Gist 持有链接即可访问，请妥善保管简历链接。同步不包含历史记录；图片需嵌入正文或使用可访问的图片地址。
@@ -165,7 +165,7 @@ gist:
   forget: 清除同步设置
   working: 正在同步，请稍候…
   open: 在 GitHub 查看 Gist
-  uploaded: 已上传完整简历。复制 Gist 地址即可在其他设备同步。
+  uploaded: "已上传完整简历。请复制并保存同步码，后续可使用同步码恢复配置。"
   downloaded: 已从 Gist 下载并保存。
   confirm_download: 确认后将替换当前正文、CSS 和排版设置。本地文件模式会保留历史记录，普通编辑模式会保留一份简历副本。
   replace: 确认替换当前简历
@@ -181,7 +181,7 @@ gist:
   show_token: "显示访问令牌"
   hide_token: "隐藏访问令牌"
   token_persistent: "设置自动保存，无需另外点击保存。令牌以明文保存在此浏览器，仅发送给 GitHub。"
-  token_session: "Gist 地址会自动保存。令牌仅在当前网页中保留，刷新或关闭网页后需要重新填写。"
+  token_session: "PAT 默认仅在当前网页中保留；刷新或换设备后，可粘贴同步码恢复配置。"
   other_token: "已经有 Fine-grained Token？"
   location_title: "设置简历保存地址"
   first_device: "第一次使用："
@@ -204,6 +204,23 @@ gist:
   download_help: "读取云端简历，确认后替换当前编辑内容，并保留原内容备份。"
   download_needs_address: "请先在第 2 步填写已有 Gist 地址。"
   sync_notes: "同步内容与链接访问范围"
+  setup_mode: "配置方式"
+  mode_pat: "首次使用：填写 PAT"
+  mode_restore: "已有同步码：恢复"
+  pat_only_help: "首次只需填写 PAT，然后点击“创建 Gist 并上传”。成功后会自动生成同步码，方便以后恢复。"
+  pat_help_title: "如何获取具有 gist 权限的 PAT？"
+  current_target: "当前同步位置："
+  legacy_setup: "旧版配置 / 手动指定 Gist（可选）"
+  restore_code_label: "Base64 同步码"
+  restore_code_placeholder: "粘贴此前保存的 Base64 同步码"
+  restore_code_help: "同步码包含 PAT 和 Gist 地址，无需分别填写。读取云端简历后，仍需确认才会替换当前内容。"
+  restore_and_download: "恢复配置并读取简历"
+  backup_code_title: "保存 Base64 同步码"
+  backup_code_help: "复制并保存这一个值。换设备或重新配置时，选择“已有同步码：恢复”，粘贴即可。"
+  show_sync_code: "显示同步码"
+  hide_sync_code: "隐藏同步码"
+  copy_sync_code: "复制同步码（包含 PAT）"
+  sync_code_privacy: "同步码包含 PAT，Base64 可以还原，请像访问令牌一样保管。同步码不会写入云端简历。"
   errors:
     invalid_id: 请输入有效的 gist.github.com 地址或 Gist ID。
     token_required: 请填写具有 Gist 写入权限的 GitHub Token。
@@ -216,4 +233,5 @@ gist:
     missing_file: Gist 中没有 resume.ohmycv.json，请先通过本应用上传。
     local_save: 本地保存失败或存在文件冲突，请先处理保存状态，再重新同步。
     storage: 浏览器无法保存同步设置，重新打开页面后需要再次填写。
-    clipboard: "无法复制，请手动选中并复制 Gist 地址。"
+    clipboard: "无法自动复制，请显示同步码后手动复制。"
+    invalid_sync_code: "同步码无效或版本不受支持，请粘贴本应用生成的完整 Base64 同步码。现有配置保持不变。"

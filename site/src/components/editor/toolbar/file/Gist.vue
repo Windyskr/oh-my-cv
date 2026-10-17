@@ -19,165 +19,180 @@
         <UiDialogTitle>{{ $t("gist.title") }}</UiDialogTitle>
         <UiDialogDescription>{{ $t("gist.description") }}</UiDialogDescription>
       </UiDialogHeader>
-      <fieldset :disabled="busy" class="space-y-6 min-w-0">
-        <section class="space-y-3" aria-labelledby="gist-token-title">
-          <h3 id="gist-token-title" class="flex items-center gap-2 text-sm font-semibold">
-            <span
-              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
-              >1</span
-            >
-            {{ $t("gist.access_title") }}
-          </h3>
-          <div class="rounded-md bg-muted p-3 space-y-2 text-sm">
+      <fieldset :disabled="busy" class="space-y-5 min-w-0">
+        <div
+          class="grid grid-cols-2 gap-2"
+          role="group"
+          :aria-label="$t('gist.setup_mode')"
+        >
+          <UiButton
+            id="gist-mode-pat"
+            :variant="mode === 'pat' ? 'default' : 'outline'"
+            :aria-pressed="mode === 'pat'"
+            @click="mode = 'pat'"
+            >{{ $t("gist.mode_pat") }}</UiButton
+          >
+          <UiButton
+            id="gist-mode-restore"
+            :variant="mode === 'restore' ? 'default' : 'outline'"
+            :aria-pressed="mode === 'restore'"
+            @click="mode = 'restore'"
+            >{{ $t("gist.mode_restore") }}</UiButton
+          >
+        </div>
+        <div v-if="mode === 'pat'" class="space-y-3">
+          <p class="text-sm text-muted-foreground">{{ $t("gist.pat_only_help") }}</p>
+          <label for="gist-token" class="block text-sm font-medium">GitHub PAT</label>
+          <div class="flex gap-2">
+            <UiInput
+              id="gist-token"
+              v-model="token"
+              :type="showToken ? 'text' : 'password'"
+              autocomplete="off"
+              spellcheck="false"
+              :placeholder="$t('gist.token_placeholder')"
+            />
+            <UiButton
+              id="gist-toggle-token"
+              variant="outline"
+              size="icon"
+              class="shrink-0"
+              :aria-label="$t(showToken ? 'gist.hide_token' : 'gist.show_token')"
+              :aria-pressed="showToken"
+              @click="showToken = !showToken"
+              ><span :class="showToken ? 'i-lucide:eye-off' : 'i-lucide:eye'"
+            /></UiButton>
+          </div>
+          <details class="rounded-md bg-muted p-3 text-xs text-muted-foreground">
+            <summary class="cursor-pointer font-medium text-foreground">
+              {{ $t("gist.pat_help_title") }}
+            </summary>
             <a
-              class="text-primary underline font-medium"
+              class="block mt-3 text-primary underline"
               href="https://github.com/settings/tokens/new?scopes=gist&description=Oh%20My%20CV"
               target="_blank"
               rel="noopener noreferrer"
               >{{ $t("gist.create_token") }} ↗</a
             >
-            <ol class="list-decimal pl-5 space-y-1 text-xs text-muted-foreground">
+            <ol class="list-decimal pl-5 mt-2 space-y-1">
               <li>{{ $t("gist.token_step_name") }}</li>
               <li>{{ $t("gist.token_step_scope") }}</li>
               <li>{{ $t("gist.token_step_copy") }}</li>
             </ol>
-          </div>
-          <div class="space-y-2">
-            <label for="gist-token" class="text-sm font-medium">{{
-              $t("gist.token_label")
-            }}</label>
-            <div class="flex gap-2">
-              <UiInput
-                id="gist-token"
-                v-model="token"
-                :type="showToken ? 'text' : 'password'"
-                autocomplete="off"
-                spellcheck="false"
-                :placeholder="$t('gist.token_placeholder')"
-              />
-              <UiButton
-                id="gist-toggle-token"
-                variant="outline"
-                size="icon"
-                class="shrink-0"
-                :aria-label="$t(showToken ? 'gist.hide_token' : 'gist.show_token')"
-                :aria-pressed="showToken"
-                @click="showToken = !showToken"
-              >
-                <span :class="showToken ? 'i-lucide:eye-off' : 'i-lucide:eye'" />
-              </UiButton>
-            </div>
-          </div>
-          <label class="flex items-center gap-2 text-sm">
-            <input id="gist-remember" v-model="remember" type="checkbox" />{{
+          </details>
+          <p v-if="syncUrl" class="text-xs text-muted-foreground break-all">
+            {{ $t("gist.current_target") }} {{ syncUrl }}
+          </p>
+          <details class="text-xs text-muted-foreground">
+            <summary class="cursor-pointer">{{ $t("gist.legacy_setup") }}</summary>
+            <label for="gist-id" class="block mt-3 mb-2">{{ $t("gist.address") }}</label>
+            <UiInput
+              id="gist-id"
+              v-model="gistId"
+              :placeholder="$t('gist.address_placeholder')"
+              autocomplete="off"
+              spellcheck="false"
+              :aria-invalid="!!addressError"
+            />
+            <p v-if="addressError" class="mt-2 text-destructive">{{ addressError }}</p>
+          </details>
+        </div>
+        <div v-else class="space-y-3">
+          <label for="gist-restore-code" class="block text-sm font-medium">{{
+            $t("gist.restore_code_label")
+          }}</label>
+          <UiInput
+            id="gist-restore-code"
+            v-model="restoreCode"
+            type="password"
+            autocomplete="off"
+            spellcheck="false"
+            :placeholder="$t('gist.restore_code_placeholder')"
+          />
+          <p class="text-xs text-muted-foreground">{{ $t("gist.restore_code_help") }}</p>
+          <UiButton
+            id="gist-restore-config"
+            class="w-full"
+            :disabled="!restoreCode.trim()"
+            @click="restoreConfiguration"
+            >{{ $t("gist.restore_and_download") }}</UiButton
+          >
+        </div>
+        <div class="space-y-2">
+          <label class="flex items-center gap-2 text-sm"
+            ><input id="gist-remember" v-model="remember" type="checkbox" />{{
               $t("gist.remember")
-            }}
-          </label>
+            }}</label
+          >
           <p class="text-xs text-muted-foreground">
             {{ $t(remember ? "gist.token_persistent" : "gist.token_session") }}
           </p>
-          <details class="text-xs text-muted-foreground">
-            <summary class="cursor-pointer">{{ $t("gist.other_token") }}</summary>
-            <p class="mt-2">{{ $t("gist.token_help") }}</p>
-          </details>
-        </section>
-        <section class="space-y-3" aria-labelledby="gist-address-title">
-          <h3
-            id="gist-address-title"
-            class="flex items-center gap-2 text-sm font-semibold"
+        </div>
+        <div v-if="mode === 'pat'" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="rounded-md border p-3 space-y-2">
+            <p class="text-xs font-medium">{{ $t("gist.upload_direction") }}</p>
+            <p class="text-xs text-muted-foreground">
+              {{ $t(syncUrl ? "gist.upload_help" : "gist.create_help") }}
+            </p>
+            <UiButton
+              id="gist-upload"
+              class="w-full"
+              :disabled="!token.trim() || !!addressError"
+              @click="upload"
+              >{{ $t(syncUrl ? "gist.upload" : "gist.create_upload") }}</UiButton
+            >
+          </div>
+          <div class="rounded-md border p-3 space-y-2">
+            <p class="text-xs font-medium">{{ $t("gist.download_direction") }}</p>
+            <p class="text-xs text-muted-foreground">{{ $t("gist.download_help") }}</p>
+            <UiButton
+              id="gist-download"
+              class="w-full"
+              variant="outline"
+              :disabled="!syncUrl"
+              @click="download"
+              >{{ $t("gist.download") }}</UiButton
+            >
+          </div>
+        </div>
+        <section
+          v-if="syncCode"
+          id="gist-sync-code-panel"
+          class="rounded-md border bg-muted/50 p-3 space-y-3"
+        >
+          <h3 class="text-sm font-semibold">{{ $t("gist.backup_code_title") }}</h3>
+          <p class="text-xs text-muted-foreground">{{ $t("gist.backup_code_help") }}</p>
+          <div class="flex gap-2">
+            <UiInput
+              id="gist-sync-code"
+              :model-value="syncCode"
+              readonly
+              :type="showSyncCode ? 'text' : 'password'"
+              :aria-label="$t('gist.backup_code_title')"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <UiButton
+              id="gist-toggle-sync-code"
+              variant="outline"
+              size="icon"
+              class="shrink-0"
+              :aria-label="
+                $t(showSyncCode ? 'gist.hide_sync_code' : 'gist.show_sync_code')
+              "
+              :aria-pressed="showSyncCode"
+              @click="showSyncCode = !showSyncCode"
+              ><span :class="showSyncCode ? 'i-lucide:eye-off' : 'i-lucide:eye'"
+            /></UiButton>
+          </div>
+          <UiButton
+            id="gist-copy-sync-code"
+            class="w-full"
+            variant="outline"
+            @click="copySyncCode"
+            >{{ $t(copied ? "gist.copied" : "gist.copy_sync_code") }}</UiButton
           >
-            <span
-              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
-              >2</span
-            >
-            {{ $t("gist.location_title") }}
-          </h3>
-          <div class="text-xs text-muted-foreground space-y-1.5">
-            <p>
-              <strong class="text-foreground">{{ $t("gist.first_device") }}</strong>
-              {{ $t("gist.first_device_help") }}
-            </p>
-            <p>
-              <strong class="text-foreground">{{ $t("gist.another_device") }}</strong>
-              {{ $t("gist.another_device_help") }}
-            </p>
-          </div>
-          <div class="space-y-2">
-            <label for="gist-id" class="text-sm font-medium">{{
-              $t("gist.address")
-            }}</label>
-            <div class="flex gap-2">
-              <UiInput
-                id="gist-id"
-                v-model="gistId"
-                :placeholder="$t('gist.address_placeholder')"
-                autocomplete="off"
-                spellcheck="false"
-                :aria-invalid="!!addressError"
-                aria-describedby="gist-address-status"
-              />
-              <UiButton
-                v-if="syncUrl"
-                id="gist-copy-address"
-                variant="outline"
-                class="shrink-0"
-                @click="copyAddress"
-                >{{ $t(copied ? "gist.copied" : "gist.copy_address") }}</UiButton
-              >
-            </div>
-            <p
-              id="gist-address-status"
-              class="text-xs"
-              :class="addressError ? 'text-destructive' : 'text-muted-foreground'"
-            >
-              {{ addressError || $t(syncUrl ? "gist.target_set" : "gist.target_new") }}
-            </p>
-          </div>
-        </section>
-        <section class="space-y-3" aria-labelledby="gist-action-title">
-          <h3
-            id="gist-action-title"
-            class="flex items-center gap-2 text-sm font-semibold"
-          >
-            <span
-              class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
-              >3</span
-            >
-            {{ $t("gist.action_title") }}
-          </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="rounded-md border p-3 space-y-2">
-              <p class="text-xs font-medium">{{ $t("gist.upload_direction") }}</p>
-              <p class="text-xs text-muted-foreground">
-                {{ $t(syncUrl ? "gist.upload_help" : "gist.create_help") }}
-              </p>
-              <UiButton
-                id="gist-upload"
-                class="w-full"
-                :disabled="!token.trim() || !!addressError"
-                @click="upload"
-                >{{ $t(syncUrl ? "gist.upload" : "gist.create_upload") }}</UiButton
-              >
-              <p v-if="!token.trim()" class="text-xs text-muted-foreground">
-                {{ $t("gist.upload_needs_token") }}
-              </p>
-            </div>
-            <div class="rounded-md border p-3 space-y-2">
-              <p class="text-xs font-medium">{{ $t("gist.download_direction") }}</p>
-              <p class="text-xs text-muted-foreground">{{ $t("gist.download_help") }}</p>
-              <UiButton
-                id="gist-download"
-                class="w-full"
-                variant="outline"
-                :disabled="!syncUrl"
-                @click="download"
-                >{{ $t("gist.download") }}</UiButton
-              >
-              <p v-if="!syncUrl" class="text-xs text-muted-foreground">
-                {{ $t("gist.download_needs_address") }}
-              </p>
-            </div>
-          </div>
+          <p class="text-xs text-muted-foreground">{{ $t("gist.sync_code_privacy") }}</p>
         </section>
         <details class="text-xs text-muted-foreground">
           <summary class="cursor-pointer">{{ $t("gist.sync_notes") }}</summary>
@@ -216,6 +231,7 @@
 
 <script setup lang="ts">
 import { GistError, downloadGist, getGist, parseGistId, uploadGist } from "~/utils/gist";
+import { encodeGistSyncCode, decodeGistSyncCode } from "~/utils/gistSyncCode";
 import type { DbResumeEmpty } from "~/utils/storage/db";
 import { withOptionalLayoutStyles } from "~/utils/layoutSettings";
 
@@ -234,7 +250,10 @@ const token = useState("gist-token", () => "");
 const gistId = useState("gist-id", () => "");
 const remember = useState("gist-remember", () => false);
 const gistLink = ref("");
+const mode = ref<"pat" | "restore">("pat");
+const restoreCode = ref("");
 const showToken = ref(false);
+const showSyncCode = ref(false);
 const copied = ref(false);
 const syncUrl = computed(() => {
   if (!gistId.value.trim()) return "";
@@ -247,9 +266,18 @@ const syncUrl = computed(() => {
 const addressError = computed(() =>
   gistId.value.trim() && !syncUrl.value ? t("gist.address_invalid") : ""
 );
-const copyAddress = async () => {
+const syncCode = computed(() => {
+  if (!token.value.trim() || !syncUrl.value) return "";
   try {
-    await navigator.clipboard.writeText(syncUrl.value);
+    return encodeGistSyncCode({ pat: token.value.trim(), gistId: gistId.value });
+  } catch {
+    return "";
+  }
+});
+const copySyncCode = async () => {
+  error.value = "";
+  try {
+    await navigator.clipboard.writeText(syncCode.value);
     copied.value = true;
   } catch {
     error.value = t("gist.errors.clipboard");
@@ -296,10 +324,15 @@ const setOpen = (value: boolean) => {
   if (!value) {
     pending.value = null;
     showToken.value = false;
+    showSyncCode.value = false;
+    restoreCode.value = "";
   }
 };
 
 const forget = () => {
+  mode.value = "pat";
+  restoreCode.value = "";
+  showSyncCode.value = false;
   showToken.value = false;
   remember.value = false;
   token.value = "";
@@ -366,6 +399,23 @@ const download = () =>
     pending.value = { resume, id: gist.id };
     gistLink.value = `https://gist.github.com/${gist.id}`;
   });
+
+const restoreConfiguration = async () => {
+  if (busy.value) return;
+  try {
+    const credentials = decodeGistSyncCode(restoreCode.value);
+    token.value = credentials.pat;
+    gistId.value = `https://gist.github.com/${credentials.gistId}`;
+    await nextTick();
+    restoreCode.value = "";
+    showToken.value = false;
+    showSyncCode.value = false;
+    mode.value = "pat";
+    await download();
+  } catch {
+    error.value = t("gist.errors.invalid_sync_code");
+  }
+};
 
 const applyDownload = () =>
   run(async () => {
