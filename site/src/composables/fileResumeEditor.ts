@@ -1,9 +1,11 @@
 import type { LocalResume } from "./localResume";
 import { onBeforeRouteLeave } from "vue-router";
+import { toast } from "vue-sonner";
 
 export const useFileResumeEditor = (id: number) => {
   const { setData } = useDataStore();
   const { state, content, dirty, matches, apply, save, endpoint } = useLocalResume();
+  const cloud = useRuntimeConfig().public.cloudStorage;
   let active = false;
   let timer: ReturnType<typeof setTimeout>;
   let saveTimer: ReturnType<typeof setTimeout>;
@@ -54,7 +56,15 @@ export const useFileResumeEditor = (id: number) => {
   const refresh = async () => {
     const startedRevision = state.value.revision;
     try {
-      const resume = await $fetch<LocalResume>(endpoint(), { cache: "no-store" });
+      const response = await $fetch.raw<LocalResume>(endpoint(), {
+        cache: "no-store",
+        headers:
+          cloud && startedRevision
+            ? { "If-None-Match": `"${startedRevision}"` }
+            : undefined
+      });
+      if (response.status === 304) return;
+      const resume = response._data!;
       if (
         !active ||
         state.value.saving ||
@@ -65,13 +75,20 @@ export const useFileResumeEditor = (id: number) => {
       if (resume.revision !== state.value.revision) {
         if (dirty.value && !matches(resume)) {
           state.value.conflict = true;
-          state.value.message =
-            "本地文件也有修改。请导出当前编辑备份，再选择使用文件内容。";
+          state.value.message = cloud
+            ? "云端内容已有新修改，请保存备份后选择使用云端内容。"
+            : "本地文件也有修改。请导出当前编辑备份，再选择使用文件内容。";
         } else {
           await apply(resume);
         }
       }
-    } catch {
+    } catch (failure) {
+      const status = (failure as { statusCode?: number }).statusCode;
+      if (cloud && active && !state.value.baseline && status === 404) {
+        toast.error("未找到该简历，请从列表重新打开");
+        await navigateTo(useLocalePath()("/dashboard"));
+        return;
+      }
       if (active) state.value.message = "读取失败，正在重试；当前编辑内容仍然保留。";
     } finally {
       if (active) timer = setTimeout(refresh, 1000);
@@ -97,9 +114,9 @@ export const useFileResumeEditor = (id: number) => {
 
   const markActive = () => {
     if (active && document.visibilityState === "visible")
-      void $fetch("/api/resume-library", {
+      void $fetch(cloud ? "/api/v1/active-resume" : "/api/resume-library", {
         method: "POST",
-        body: { action: "activate", id },
+        body: cloud ? { id } : { action: "activate", id },
         retry: false
       }).catch(() => {});
   };
@@ -125,7 +142,7 @@ export const useFileResumeEditor = (id: number) => {
     state.value.baseline = "";
     state.value.conflict = false;
     state.value.failed = false;
-    state.value.message = "正在读取本地简历…";
+    state.value.message = cloud ? "正在读取云端简历…" : "正在读取本地简历…";
     active = true;
     window.addEventListener("beforeunload", beforeUnload);
     document.addEventListener("visibilitychange", saveWhenHidden);

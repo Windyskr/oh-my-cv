@@ -44,7 +44,9 @@ onMounted(async () => {
       .__RESUME_EXPORT__;
     if (!snapshot && historyId.value) {
       const version = await $fetch<HistoryVersion>(
-        `/api/local-resume/history/${encodeURIComponent(historyId.value)}`,
+        useRuntimeConfig().public.cloudStorage
+          ? `/api/v1/resumes/${route.query.resumeId}/history/${encodeURIComponent(historyId.value)}`
+          : `/api/local-resume/history/${encodeURIComponent(historyId.value)}`,
         {
           cache: "no-store",
           query: route.query.resumeId ? { resumeId: route.query.resumeId } : undefined

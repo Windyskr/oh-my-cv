@@ -26,11 +26,15 @@ export const useLocalResume = () => {
   const route = useRoute();
   const isFileEditor = computed(
     () =>
-      useRuntimeConfig().public.localFeatures &&
+      (useRuntimeConfig().public.localFeatures ||
+        useRuntimeConfig().public.cloudStorage) &&
       /\/(?:local|editor\/\d+)\/?$/.test(route.path)
   );
+  const cloud = useRuntimeConfig().public.cloudStorage;
   const endpoint = (suffix = "") =>
-    `/api/local-resume${suffix}${state.value.documentId ? `?resumeId=${state.value.documentId}` : ""}`;
+    cloud
+      ? `/api/v1/resumes/${state.value.documentId}${suffix}`
+      : `/api/local-resume${suffix}${state.value.documentId ? `?resumeId=${state.value.documentId}` : ""}`;
   const snapshot = () => ({
     name: data.resumeName,
     markdown: data.markdown,
@@ -73,7 +77,7 @@ export const useLocalResume = () => {
       state.value.baseline = serialize(resume);
       state.value.conflict = false;
       state.value.failed = false;
-      state.value.message = "自动保存已开启";
+      state.value.message = cloud ? "云端自动保存已开启" : "自动保存已开启";
       setData("loaded", true);
     } finally {
       state.value.applying = false;
@@ -101,14 +105,15 @@ export const useLocalResume = () => {
       state.value.revision = saved.revision;
       state.value.baseline = serialize(submitted);
       state.value.conflict = false;
-      state.value.message = "已保存到本地文件";
+      state.value.message = cloud ? "已保存到 Cloudflare 数据库" : "已保存到本地文件";
       return true;
     } catch (error) {
       const failure = error as { statusCode?: number; response?: { status: number } };
       if (failure.statusCode === 409 || failure.response?.status === 409) {
         state.value.conflict = true;
-        state.value.message =
-          "本地文件也有修改。请导出当前编辑备份，再选择使用文件内容。";
+        state.value.message = cloud
+          ? "云端简历已有新修改，请保存备份后选择使用云端内容。"
+          : "本地文件也有修改。请导出当前编辑备份，再选择使用文件内容。";
       } else {
         state.value.failed = true;
         state.value.message = "自动保存失败，正在重试；编辑内容仍然保留。";
@@ -139,7 +144,9 @@ export const useLocalResume = () => {
       const failure = error as { statusCode?: number; response?: { status: number } };
       if (failure.statusCode === 409 || failure.response?.status === 409) {
         state.value.conflict = true;
-        state.value.message = "本地文件已有新修改，请同步文件后再恢复历史版本。";
+        state.value.message = cloud
+          ? "云端简历已有新修改，请读取最新内容后再恢复历史版本。"
+          : "本地文件已有新修改，请同步文件后再恢复历史版本。";
       }
       return false;
     } finally {

@@ -19,6 +19,13 @@ landing:
     - title: Primero tu privacidad
       items: Open source, libre y gratuito<br>Información guardada en tu equipo<br>No necesita que te registres<br>No realizamos ningún trackeo ni mostramos publicidad<br>No ads
 
+  cloud_desc: "Gestiona currículos con inicio de sesión, almacenamiento remoto y API para agentes. El historial se guarda en tu cuenta."
+  cloud_feats:
+    - title: "Edita con tu agente"
+      items: "Gestiona varios currículos<br>Vista previa de Markdown<br>Ajustes de formato precisos<br>Actualizaciones mediante API<br>Exportación PDF"
+    - title: "Cuenta y almacenamiento remoto"
+      items: "Usuario y contraseña<br>Datos separados por cuenta<br>Currículos e historial en Cloudflare D1<br>Tokens con permisos y caducidad<br>Importación de currículos existentes"
+
 dashboard:
   my_resumes: Mis CVs
   created: "Creado: "

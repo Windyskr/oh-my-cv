@@ -2,7 +2,7 @@
   <EditorToolbarBox :text="$t('toolbar.file.title')" icon="i-carbon:import-export">
     <EditorToolbarFileSave />
     <EditorToolbarFileHistory />
-    <EditorToolbarFileGist />
+    <EditorToolbarFileGist v-if="!useRuntimeConfig().public.cloudStorage" />
     <EditorToolbarFileRename />
 
     <hr border-dashed my-2 />

@@ -19,6 +19,13 @@ landing:
     - title: Privacy First
       items: Open source and free<br>All data is saved locally<br>No login or registration needed<br>No user tracking<br>No ads
 
+  cloud_desc: "Manage resumes with account login, cloud storage and an Agent API. Your resume history follows your account."
+  cloud_feats:
+    - title: "Write with your Agent"
+      items: "Manage multiple resumes<br>Live Markdown preview<br>Precise layout settings<br>Agent API changes appear automatically<br>Export PDF"
+    - title: "Account and cloud storage"
+      items: "Username and password login<br>Account-isolated data<br>Resumes and history stored in Cloudflare D1<br>Scoped and expiring API tokens<br>Import existing resumes"
+
 dashboard:
   my_resumes: My Resumes
   created: "Created: "

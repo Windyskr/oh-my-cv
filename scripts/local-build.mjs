@@ -164,3 +164,5 @@ export const startLocalServer = async ({
     }
   });
 };
+
+export const localBuildInputs = inputs;

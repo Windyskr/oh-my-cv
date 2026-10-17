@@ -1,4 +1,6 @@
-# 本地简历编辑与 PDF 导出
+# 本地简历编辑与 PDF 导出（旧版）
+
+当前分支使用账户登录和 Cloudflare D1，启动、部署和 Agent API 操作见 [CLOUD-API.md](CLOUD-API.md)。本文件保留文件存储版本的维护及迁移说明。
 
 ## 普通简历与 Agent 文件编辑
 
@@ -37,10 +39,10 @@ tmux new-session -d -s ohmycv-local 'pnpm start --host 127.0.0.1 --port 3000 > l
 
 将简历保存到以下位置：
 
-| 文件 | 内容 |
-| --- | --- |
-| `resumes/resume.md` | 简历正文和 YAML 页眉 |
-| `resumes/resume.css` | 自定义排版样式 |
+| 文件                         | 内容                             |
+| ---------------------------- | -------------------------------- |
+| `resumes/resume.md`          | 简历正文和 YAML 页眉             |
+| `resumes/resume.css`         | 自定义排版样式                   |
 | `resumes/resume.ohmycv.json` | 简历名称、页面设置及完整导入备份 |
 
 首次准备文件时，可以在普通编辑器中导出 Markdown、复制 CSS，并在简历列表中使用“另存为”导出 JSON。本地模式使用 JSON 中第一份简历的名称和 `styles`，请保留目标简历对应的条目。
@@ -57,7 +59,7 @@ tmux new-session -d -s ohmycv-local 'pnpm start --host 127.0.0.1 --port 3000 > l
 
 ```html
 <!-- #region university-logo -->
-<img class="university-logo" src="..." alt="学校标志">
+<img class="university-logo" src="..." alt="学校标志" />
 <!-- #endregion -->
 ```
 
@@ -153,11 +155,11 @@ pnpm export:pdf output/pdf/resume-custom.pdf
 
 可选环境变量：
 
-| 变量 | 用途 |
-| --- | --- |
-| `RESUME_PDF_CHROME_PATH` | 指定 Chrome / Chromium 可执行文件位置 |
-| `RESUME_PDF_SERVER_URL` | 指定已运行的本地 HTTP 服务，例如 `http://127.0.0.1:3000` |
-| `RESUME_PDF_NO_SANDBOX=1` | 在运行环境确实需要时关闭 Chromium 沙盒 |
+| 变量                      | 用途                                                     |
+| ------------------------- | -------------------------------------------------------- |
+| `RESUME_PDF_CHROME_PATH`  | 指定 Chrome / Chromium 可执行文件位置                    |
+| `RESUME_PDF_SERVER_URL`   | 指定已运行的本地 HTTP 服务，例如 `http://127.0.0.1:3000` |
+| `RESUME_PDF_NO_SANDBOX=1` | 在运行环境确实需要时关闭 Chromium 沙盒                   |
 
 使用现有服务时，浏览器相关变量需要设置在服务进程中。Google Fonts 在线字体选择需要在 `site/.env` 中配置 `NUXT_PUBLIC_GOOGLE_FONTS_KEY`；内置字体可以直接使用。
 

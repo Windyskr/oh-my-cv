@@ -1,8 +1,10 @@
 # 修改用户简历
 
-- 本地服务中的普通简历直接保存为文件。修改简历前，读取 `resumes/.active-resume.json`，其中记录最近打开的简历及对应目录。
-- 正文修改对应目录中的 `resume.md`，自定义样式修改 `resume.css`，名称和侧边栏排版参数修改 `resume.ohmycv.json` 中对应简历的 `name`、`styles`。正文和 CSS 以独立文件为准。
-- 保留简历 ID、JSON 格式及已有排版参数。网页会自动读取文件变化，无需导入或另开本地编辑页面。
-- 旧简历使用 `resumes/` 根目录；其他简历位于 `resumes/library/<id>/`。没有当前简历记录时，根据用户指定的简历名称查找对应目录。
-- 用户简历、历史记录、删除备份和当前简历记录均位于 Git 忽略的 `resumes/` 中，不要将其加入提交。
-- 验证程序时使用临时简历目录，避免修改用户当前简历。
+- 当前分支使用 Cloudflare D1。用户简历以鉴权 API 返回的数据为准。
+- 使用 `OHMYCV_API_TOKEN` 环境变量；`OHMYCV_API_URL` 默认指向 `https://ohmycv-auth.ccgslb.workers.dev`。不要打印、提交或写入简历中的 API 令牌。
+- 修改当前简历前运行 `node scripts/cloud-resume.mjs current`，或调用 `GET /api/v1/active-resume`。用户指定其他简历时，先查询列表并确认对应 ID。
+- 使用 `node scripts/cloud-resume.mjs patch --markdown <临时文件>`、`--css <临时文件>` 或 `--json <临时文件>` 提交修改。接口需要当前 revision，遇到 `409` 先重新读取并保留其他修改。
+- 日常简历修改通过 API 提交；Cloudflare 管理凭据只用于部署及明确要求的数据迁移。
+- 网页会自动读取 API 修改。`resumes/` 目录中的文件属于旧版文件存储和迁移来源，直接修改这些文件不会更新云端简历。
+- 账户及 API 文档见 `CLOUD-API.md`。迁移已有数据时，需要先确认已经注册的目标用户名，不需要用户发送密码。
+- 个人简历、迁移备份、临时凭据及截图不加入 Git。验证程序使用独立测试账户，验证后清理测试数据。

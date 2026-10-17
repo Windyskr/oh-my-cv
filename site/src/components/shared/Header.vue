@@ -47,6 +47,15 @@
         </UiDropdownMenuContent>
       </UiDropdownMenu>
 
+      <UiButton
+        v-if="cloudStorage"
+        :as="NuxtLink"
+        :to="$nuxt.$localePath(auth.user.value ? '/account' : '/login')"
+        variant="ghost-secondary"
+        size="xs"
+        class="h-8"
+        >{{ auth.user.value ? auth.user.value.display_name : "登录" }}</UiButton
+      >
       <slot name="tail" />
 
       <SharedToggleDark />
@@ -68,6 +77,11 @@
 <script lang="ts" setup>
 import { NuxtLink } from "#components";
 
+const cloudStorage = useRuntimeConfig().public.cloudStorage;
+const auth = useCloudAuth();
+onMounted(() => {
+  if (cloudStorage) void auth.load();
+});
 const switchLocalePath = useSwitchLocalePath();
 const { locale, locales } = useI18n();
 

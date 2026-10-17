@@ -8,7 +8,9 @@
     >
       <div text-center>
         <h1 text="3xl sm:4xl" v-html="$t('landing.hero')" />
-        <div my-10 text="lg sm:xl"><SharedBrandName /> {{ $t("landing.desc") }}</div>
+        <div my-10 text="lg sm:xl">
+          <SharedBrandName /> {{ $t(cloud ? "landing.cloud_desc" : "landing.desc") }}
+        </div>
 
         <UiButton
           :as="NuxtLink"
@@ -32,12 +34,12 @@
               >
                 <span :class="i ? 'i-wpf:privacy' : 'i-mdi:rocket-launch'" />
               </span>
-              <h2 text-foreground>{{ $t(`landing.feats[${i}].title`) }}</h2>
+              <h2 text-foreground>{{ $t(`landing.${featureGroup}[${i}].title`) }}</h2>
             </div>
 
             <ul text="sm muted-foreground" pl-2 ml-4.5 list-disc>
               <li
-                v-for="line in $t(`landing.feats[${i}].items`).split('<br>')"
+                v-for="line in $t(`landing.${featureGroup}[${i}].items`).split('<br>')"
                 :key="line"
                 v-html="line"
               />
@@ -51,4 +53,6 @@
 
 <script setup lang="ts">
 import { NuxtLink } from "#components";
+const cloud = useRuntimeConfig().public.cloudStorage;
+const featureGroup = cloud ? "cloud_feats" : "feats";
 </script>

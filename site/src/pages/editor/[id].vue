@@ -36,7 +36,9 @@
         variant="outline"
         size="sm"
         @click="fileEditor.useFiles"
-        >使用文件内容</UiButton
+        >{{
+          useRuntimeConfig().public.cloudStorage ? "使用云端内容" : "使用文件内容"
+        }}</UiButton
       >
     </div>
     <div class="workspace flex pb-2 min-h-0">
@@ -73,6 +75,7 @@
 </template>
 
 <script lang="ts" setup>
+import { removeCss } from "@ohmycv/dynamic-css";
 import { isInteger } from "@renovamen/utils";
 
 const route = useRoute();
@@ -80,7 +83,7 @@ const { data } = useDataStore();
 
 definePageMeta({ key: (route) => route.path });
 const fileEditor =
-  useRuntimeConfig().public.localFeatures &&
+  (useRuntimeConfig().public.localFeatures || useRuntimeConfig().public.cloudStorage) &&
   isInteger(route.params.id, { allowString: true }) &&
   Number(route.params.id) > 0
     ? useFileResumeEditor(Number(route.params.id))
@@ -91,6 +94,11 @@ onMounted(() => {
   if (isInteger(route.params.id, { allowString: true })) {
     storageService.switchToResume(Number(route.params.id));
   }
+});
+
+onBeforeUnmount(() => {
+  removeCss("ohmycv-css-editor-preview");
+  removeCss("ohmycv-toolbar-preview");
 });
 
 // Toogle toolbar

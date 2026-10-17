@@ -3,7 +3,9 @@ import { i18n } from "./configs/i18n";
 import { fileURLToPath } from "node:url";
 
 const localBuild = process.env.RESUME_LOCAL_BUILD === "1";
-const localFeatures = localBuild || process.env.NODE_ENV !== "production";
+const cloudStorage = process.env.RESUME_CLOUD_BUILD === "1";
+const localFeatures =
+  !cloudStorage && (localBuild || process.env.NODE_ENV !== "production");
 const siteUrl = process.env.NUXT_SITE_URL || "https://ohmycv.app";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -16,11 +18,16 @@ export default defineNuxtConfig({
     ? { output: { dir: fileURLToPath(new URL("./.output-local", import.meta.url)) } }
     : {},
 
+  routeRules: { "/api/**": { prerender: false } },
+
   hooks: {
     "pages:extend"(pages) {
       if (localFeatures) return;
       for (let index = pages.length - 1; index >= 0; index--) {
-        if (/\/pages\/(local|pdf-render)\.vue$/.test(pages[index].file || ""))
+        if (
+          /\/pages\/local\.vue$/.test(pages[index].file || "") ||
+          (!cloudStorage && /\/pages\/pdf-render\.vue$/.test(pages[index].file || ""))
+        )
           pages.splice(index, 1);
       }
     }
@@ -55,6 +62,8 @@ export default defineNuxtConfig({
     localFilesEnabled: localFeatures,
     public: {
       localFeatures,
+      cloudStorage,
+      cloudApiBase: cloudStorage ? siteUrl : "",
       googleFontsKey: ""
     }
   },
@@ -86,5 +95,5 @@ export default defineNuxtConfig({
   },
 
   sitemap: { enabled: !localFeatures },
-  pwa: { ...pwa, disable: localFeatures }
+  pwa: { ...pwa, disable: localFeatures || cloudStorage }
 });

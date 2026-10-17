@@ -2,13 +2,19 @@ import { spawn } from "node:child_process";
 import { rm, writeFile, access } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
+import { mkdir } from "node:fs/promises";
+import { localBuildInputs } from "./local-build.mjs";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const output = resolve(projectRoot, "site/.output/public");
+const cloud = process.env.RESUME_CLOUD_BUILD === "1";
+const inputStamp = cloud ? await localBuildInputs() : "";
 const siteUrl = new URL(
   process.env.NUXT_SITE_URL ||
     process.env.CF_PAGES_URL ||
-    "https://ohmycv-windyskr.pages.dev"
+    (cloud
+      ? "https://ohmycv-auth.ccgslb.workers.dev"
+      : "https://ohmycv-windyskr.pages.dev")
 ).origin;
 const env = {
   ...process.env,
@@ -39,7 +45,7 @@ const redirects = ["", "/en", "/sp", "/zh-cn"].flatMap((prefix) => [
   `${prefix}/editor/* /200 200`,
   `${prefix}/local ${prefix}/dashboard 302`,
   `${prefix}/local/ ${prefix}/dashboard 302`,
-  `${prefix}/pdf-render ${prefix}/dashboard 302`
+  ...(!cloud ? [`${prefix}/pdf-render ${prefix}/dashboard 302`] : [])
 ]);
 await writeFile(resolve(output, "_redirects"), redirects.join("\n") + "\n");
 await writeFile(
@@ -49,3 +55,11 @@ await writeFile(
 // CNAME belongs to the upstream GitHub Pages deployment.
 await rm(resolve(output, "CNAME"), { force: true });
 console.log(`Cloudflare Pages files are ready: ${output}`);
+
+if (cloud && (await localBuildInputs()) === inputStamp) {
+  await mkdir(resolve(projectRoot, ".cache"), { recursive: true });
+  await writeFile(
+    resolve(projectRoot, ".cache/auth-client.json"),
+    JSON.stringify({ inputs: inputStamp, siteUrl })
+  );
+}

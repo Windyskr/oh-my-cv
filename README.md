@@ -1,5 +1,11 @@
 # Oh My CV!
 
+This branch adds username/password accounts, Cloudflare D1 storage, version history, and a scoped Agent API.
+
+- App: https://ohmycv-auth.ccgslb.workers.dev
+- Setup, migration and API usage: [CLOUD-API.md](CLOUD-API.md)
+- Run locally: `pnpm start` (connects to the configured D1 database).
+
 Microsoft Word and LaTeX are too overkill for a resume.
 
 So, why not write it in Markdown?
@@ -8,14 +14,12 @@ Have fun: [ohmycv.app](https://ohmycv.app/)
 
 For local file editing and background PDF export, see [Local usage](LOCAL-USAGE.md).
 
-
 &nbsp;
 
 ## Important Notice
 
 - Highly recommend using **Chromium-based browsers**, e.g., [Chrome](https://www.google.com/chrome/) and [Microsoft Edge](https://www.microsoft.com/en-us/edge).
 - **Backup your data**: Cloud backup is coming soon, but isn't available yet. For now, please regularly export and back up your data by clicking the `Save As` button.
-
 
 &nbsp;
 
@@ -40,20 +44,17 @@ For local file editing and background PDF export, see [Local usage](LOCAL-USAGE.
   - No user tracking or ads
 - Dark mode
 
-
 &nbsp;
 
 ## Contribution
 
 Contributions are welcome. Please read this [Contributing Guide](.github/CONTRIBUTING.md) before getting started. Thanks!
 
-
 &nbsp;
 
 ## Credits
 
 - [billryan/resume](https://github.com/billryan/resume)
-
 
 &nbsp;
 

@@ -11,6 +11,7 @@
 </template>
 
 <script lang="ts" setup>
+import DOMPurify from "dompurify";
 import { layoutFieldKeys } from "~/utils/layoutSettings";
 import { resolveResumeMargins } from "~/utils/resumeMargins";
 import { useSmartPages } from "@ohmycv/vue-smart-pages";
@@ -31,7 +32,10 @@ const size = computed(() => ({
   width: constant.PAPER.SIZES[props.styles.paper].w
 }));
 const margins = computed(() => resolveResumeMargins(props.styles));
-const html = computed(() => markdownService.renderResume(props.markdown));
+const html = computed(() => {
+  const content = markdownService.renderResume(props.markdown);
+  return import.meta.client ? DOMPurify.sanitize(content) : content;
+});
 
 const { render } = useSmartPages(target, html, size, margins, {
   beforeRender: async () => {

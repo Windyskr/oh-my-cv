@@ -1,4 +1,5 @@
 import { isClient } from "@renovamen/utils";
+import { CloudResumeDbService } from "./cloud";
 import { FileResumeDbService } from "./files";
 import { downloadFile } from "@renovamen/utils";
 import type { ValidVersion } from "~/composables/constant";
@@ -21,7 +22,9 @@ const AVAILABLE_SERVICES: Record<string, DbService> = {
 export class StorageService {
   private _browser: DbService;
   private _files: FileResumeDbService;
+  private _cloud = new CloudResumeDbService();
   private get _db(): DbService {
+    if (isClient && useRuntimeConfig().public.cloudStorage) return this._cloud;
     return isClient && useRuntimeConfig().public.localFeatures
       ? this._files
       : this._browser;
@@ -162,6 +165,18 @@ export class StorageService {
     }
   }
 
+  public async importBrowserResumes() {
+    const result = await this._browser.queryAll();
+    if (result.error) throw new Error(result.error.message);
+    for (const resume of result.data || [])
+      await $fetch("/api/v1/import", {
+        method: "POST",
+        body: { sourceId: `browser:${resume.id}`, resume },
+        retry: false
+      });
+    return result.data?.length || 0;
+  }
+
   public async exportToJSON() {
     const data = (await this.getResumes()).reduce(
       (acc, { id, name, markdown, css, styles, created_at, updated_at }) => {
@@ -209,6 +224,17 @@ export class StorageService {
     // Migrate data if needed
     const migrateService = new MigrateService(res.version);
     const { data } = await migrateService.migrate(res.data);
+
+    if (useRuntimeConfig().public.cloudStorage) {
+      for (const [id, resume] of Object.entries(data))
+        await $fetch("/api/v1/import", {
+          method: "POST",
+          body: { sourceId: `json:${id}`, resume },
+          retry: false
+        });
+      toast.import(true);
+      return;
+    }
 
     for (const [_id, resume] of Object.entries(data)) {
       const id = Number(_id);

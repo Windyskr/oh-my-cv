@@ -8,21 +8,22 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node scripts/start-local.mjs",
+    "start": "node scripts/start-auth.mjs",
     "build:local": "node scripts/start-local.mjs --build-only",
-    "export:pdf": "node scripts/export-pdf.mjs",
+    "export:pdf": "node scripts/export-cloud-pdf.mjs",
     "build": "pnpm --filter=site build",
-    "build:cloudflare": "node scripts/build-cloudflare.mjs",
-    "deploy:cloudflare": "pnpm build:cloudflare && pnpm dlx wrangler@4.151.1 pages deploy",
+    "build:cloudflare": "RESUME_CLOUD_BUILD=1 node scripts/build-cloudflare.mjs",
+    "deploy:cloudflare": "pnpm build:cloudflare && pnpm dlx wrangler@4.151.1 d1 migrations apply DB --remote && pnpm dlx wrangler@4.151.1 deploy",
     "build:pkg": "pnpm -r --stream build:pkg",
     "build-fast:pkg": "pnpm -r --stream build-fast:pkg",
-    "dev": "pnpm --filter=site dev",
+    "dev": "node scripts/start-auth.mjs",
     "lint": "eslint .",
     "release": "pnpm build:pkg && pnpm build",
     "release:pkg": "pnpm release:pkg:check && pnpm release:pkg:version && pnpm -r publish",
     "release:pkg:check": "pnpm lint && pnpm build:pkg",
     "release:pkg:version": "bumpp package.json packages/*/package.json --commit \"build: publish v%s\" --all --tag --push",
-    "serve": "pnpm --filter=site serve"
+    "serve": "pnpm --filter=site serve",
+    "cloud:migrate": "pnpm dlx wrangler@4.151.1 d1 migrations apply DB --remote"
   },
   "prettier": "@renovamen/prettier-config",
   "devDependencies": {
