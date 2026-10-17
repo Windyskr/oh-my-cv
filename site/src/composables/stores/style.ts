@@ -32,7 +32,8 @@ export const useStyleStore = defineStore("style", () => {
 
     // update CSS
     // vue-smart-pages will handle margins, height and width
-    if (!["marginV", "marginH"].includes(key)) dynamicCssService.injectToolbar(styles);
+    if (!["marginV", "marginH", "marginTop", "marginBottom"].includes(key))
+      dynamicCssService.injectToolbar(styles);
   };
 
   return {

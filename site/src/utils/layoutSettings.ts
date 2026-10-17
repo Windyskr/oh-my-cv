@@ -202,11 +202,16 @@ export const imageOffsetKeys = [
   "logoOffsetX",
   "logoOffsetY"
 ] as const;
-export type OptionalLayoutKey = LayoutFieldKey | (typeof imageOffsetKeys)[number];
+export const verticalMarginKeys = ["marginTop", "marginBottom"] as const;
+export type OptionalLayoutKey =
+  | LayoutFieldKey
+  | (typeof imageOffsetKeys)[number]
+  | (typeof verticalMarginKeys)[number];
 export type OptionalLayoutStyles = Partial<Record<OptionalLayoutKey, number>>;
 export const optionalLayoutKeys: OptionalLayoutKey[] = [
   ...layoutFieldKeys,
-  ...imageOffsetKeys
+  ...imageOffsetKeys,
+  ...verticalMarginKeys
 ];
 
 export const withOptionalLayoutStyles = <T extends object>(
@@ -222,7 +227,11 @@ export const validOptionalLayoutStyles = (styles: OptionalLayoutStyles) =>
   optionalLayoutKeys.every((key) => {
     const value = styles[key];
     const bounds =
-      key in layoutFields ? layoutFields[key as LayoutFieldKey] : { min: -200, max: 200 };
+      key in layoutFields
+        ? layoutFields[key as LayoutFieldKey]
+        : key === "marginTop" || key === "marginBottom"
+          ? { min: 0, max: 100 }
+          : { min: -200, max: 200 };
     return (
       value === undefined ||
       (typeof value === "number" &&

@@ -66,7 +66,8 @@ toolbar:
   font_size: 字号
   margins:
     title: 页边距
-    vertical: 上下
+    top: 上边距
+    bottom: 下边距
     horizontal: 左右
   paragraph_spacing: 章节上方间距
   line_height: 行间距

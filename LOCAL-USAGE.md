@@ -64,6 +64,12 @@ tmux new-session -d -s ohmycv-local 'pnpm start --host 127.0.0.1 --port 3000 > l
 
 尚未调整时沿用现有 CSS 并显示实际偏移；“恢复原有设置”仅清除对应图片的位置和尺寸覆盖值。设置会自动保存至 `styles.photoOffsetX`、`styles.photoOffsetY`、`styles.logoOffsetX`、`styles.logoOffsetY`，并用于 PDF 导出。简历中缺少对应图片时，该组控件会禁用。
 
+## 独立上下页边距
+
+右侧“页边距”分别设置上边距、下边距和左右边距，支持 0–100px、0.1px 步长。上边距与下边距独立保存至 `styles.marginTop` 和 `styles.marginBottom`，用于页面分页、图片定位及 PDF 导出，并随 Gist 和历史版本保存、恢复。
+
+旧简历未设置独立边距时保持原来的排版：上边距沿用 `marginV`，下边距沿用旧版的计算值。调整其中一项不会改变另一项；显式设置下边距为 0 时会直接使用 0px。
+
 ## 页眉、正文与精确输入
 
 - “页眉与个人信息”：姓名字号、联系方式字号、信息区域上方留白、页眉最小高度、姓名与联系方式间距、页眉与正文间距。

@@ -4,7 +4,7 @@
     :id="`resume-${id}`"
     ref="target"
     :style="{
-      '--resume-margin-top': `${styles.marginV}px`,
+      '--resume-margin-top': `${margins.top}px`,
       '--resume-margin-left': `${styles.marginH}px`
     }"
   />
@@ -12,6 +12,7 @@
 
 <script lang="ts" setup>
 import { layoutFieldKeys } from "~/utils/layoutSettings";
+import { resolveResumeMargins } from "~/utils/resumeMargins";
 import { useSmartPages } from "@ohmycv/vue-smart-pages";
 import type { ResumeStyles } from "~/composables/stores/style";
 
@@ -29,12 +30,7 @@ const size = computed(() => ({
   height: constant.PAPER.sizeToPx(props.styles.paper, "h"),
   width: constant.PAPER.SIZES[props.styles.paper].w
 }));
-const margins = computed(() => ({
-  top: props.styles.marginV,
-  bottom: Math.max(props.styles.marginV - 10, constant.RENDER.PRINT_BOTTOM),
-  left: props.styles.marginH,
-  right: props.styles.marginH
-}));
+const margins = computed(() => resolveResumeMargins(props.styles));
 const html = computed(() => markdownService.renderResume(props.markdown));
 
 const { render } = useSmartPages(target, html, size, margins, {
