@@ -1,3 +1,4 @@
+import { layoutStyleCss } from "~/utils/layoutSettings";
 import { injectCss } from "@ohmycv/dynamic-css";
 import { useConstant } from "~/composables/constant";
 import type { ResumeStyles } from "~/composables/stores/style";
@@ -49,8 +50,49 @@ export class DynamicCssService {
     return `${selector} { font-family: ${fontEN}, ${fontCJK}, Arial, Helvetica, sans-serif; }`;
   };
 
+  private imagePosition = (selector: string, styles: ResumeStyles) => {
+    const rules: string[] = [];
+    const images = [
+      {
+        className: "resume-photo",
+        x: styles.photoOffsetX,
+        y: styles.photoOffsetY,
+        photo: true
+      },
+      {
+        className: "university-logo",
+        x: styles.logoOffsetX,
+        y: styles.logoOffsetY,
+        photo: false
+      }
+    ];
+    for (const image of images) {
+      if (image.x === undefined && image.y === undefined) continue;
+      const declarations = ["position: absolute;"];
+      if (image.x !== undefined) {
+        declarations.push(
+          image.photo
+            ? `left: auto; right: calc(var(--resume-margin-left, 45px) - ${image.x}px);`
+            : `right: auto; left: calc(var(--resume-margin-left, 45px) + ${image.x}px);`
+        );
+      }
+      if (image.y !== undefined) {
+        declarations.push(
+          `bottom: auto; top: calc(var(--resume-margin-top, 35px) + ${image.y}px);`
+        );
+      }
+      rules.push(
+        `${selector} [data-scope="vue-smart-pages"][data-part="page"] .${image.className} { ${declarations.join("")} }`
+      );
+    }
+    return rules.length
+      ? `${selector} [data-scope="vue-smart-pages"][data-part="page"] { position: relative; }` +
+          rules.join("")
+      : "";
+  };
+
   private fontSize = (selector: string, styles: ResumeStyles) => {
-    return `${selector} { font-size: ${styles.fontSize}px; }`;
+    return `${selector}, ${selector} [data-scope="vue-smart-pages"][data-part="page"] { font-size: ${styles.fontSize}px; }`;
   };
 
   private paperSize = (styles: ResumeStyles) => {
@@ -72,6 +114,8 @@ export class DynamicCssService {
       this.fontSize(selector, styles) +
       this.themeColor(selector, styles) +
       this.paragraphSpace(selector, styles) +
+      layoutStyleCss(selector, styles) +
+      this.imagePosition(selector, styles) +
       this.lineHeight(selector, styles) +
       // We only need to set paper size for the preview view in the editor
       (id === undefined ? this.paperSize(styles) : "");

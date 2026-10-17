@@ -1,3 +1,4 @@
+import { withOptionalLayoutStyles } from "~/utils/layoutSettings";
 import type { ResumeStyles } from "./stores/style";
 import type { DbResumeEmpty } from "~/utils/storage/db";
 import { until } from "@vueuse/core";
@@ -13,6 +14,7 @@ export const useLocalResume = () => {
     revision: "",
     baseline: "",
     saving: false,
+    restoring: false,
     applying: false,
     failed: false,
     conflict: false,
@@ -50,7 +52,9 @@ export const useLocalResume = () => {
       setData("resumeName", resume.name);
       setAndSyncToMonaco("markdown", resume.markdown);
       setAndSyncToMonaco("css", resume.css);
-      for (const [key, value] of Object.entries(resume.styles)) {
+      for (const [key, value] of Object.entries(
+        withOptionalLayoutStyles(resume.styles)
+      )) {
         await setStyle(key as keyof ResumeStyles, value);
       }
       state.value.revision = resume.revision;
@@ -103,5 +107,34 @@ export const useLocalResume = () => {
     }
   };
 
-  return { state, content, dirty, matches, apply, save };
+  const restoreHistory = async (id: string) => {
+    if (!(await save()) || state.value.conflict || state.value.applying) return false;
+    // Wait for any save started while this action was waiting for the previous one.
+    while (state.value.saving) await until(() => state.value.saving).toBe(false);
+    state.value.saving = true;
+    state.value.restoring = true;
+    try {
+      const restored = await $fetch<LocalResume>("/api/local-resume/history/restore", {
+        method: "POST",
+        timeout: 15000,
+        retry: false,
+        body: { id, revision: state.value.revision }
+      });
+      await apply(restored);
+      state.value.message = "已恢复历史版本";
+      return true;
+    } catch (error) {
+      const failure = error as { statusCode?: number; response?: { status: number } };
+      if (failure.statusCode === 409 || failure.response?.status === 409) {
+        state.value.conflict = true;
+        state.value.message = "本地文件已有新修改，请同步文件后再恢复历史版本。";
+      }
+      return false;
+    } finally {
+      state.value.restoring = false;
+      state.value.saving = false;
+    }
+  };
+
+  return { state, content, dirty, matches, apply, save, restoreHistory };
 };

@@ -1,0 +1,16 @@
+<template>
+  <EditorToolbarBox
+    :text="$t('toolbar.heading_spacing.title')"
+    icon="i-icon-park-outline:paragraph-break-two"
+  >
+    <EditorToolbarLayoutFields
+      :fields="[
+        'headingFontSize',
+        'headingRuleWidth',
+        'headingRuleGap',
+        'headingContentGap'
+      ]"
+      :reset-text="$t('toolbar.heading_spacing.reset')"
+    />
+  </EditorToolbarBox>
+</template>

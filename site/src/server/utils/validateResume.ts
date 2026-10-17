@@ -1,3 +1,4 @@
+import { validOptionalLayoutStyles } from "../../utils/layoutSettings";
 import type { LocalResume } from "./localResume";
 
 export const validateResume = (value: unknown): LocalResume => {
@@ -18,6 +19,7 @@ export const validateResume = (value: unknown): LocalResume => {
     ].every((item) => Number.isFinite(item) && item >= 0) ||
     styles.fontSize === 0 ||
     styles.lineHeight === 0 ||
+    !validOptionalLayoutStyles(styles) ||
     !["A4", "letter"].includes(styles.paper) ||
     typeof styles.themeColor !== "string" ||
     ![styles.fontCJK, styles.fontEN].every(

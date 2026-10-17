@@ -1,3 +1,4 @@
+import { withOptionalLayoutStyles } from "~/utils/layoutSettings";
 import * as localForage from "localforage";
 import { isObject, isInteger, arrayify } from "@renovamen/utils";
 import type { ValidVersion } from "~/composables/constant";
@@ -13,7 +14,7 @@ import type { ValidStorageJsonData } from "./migrate";
 const setResumeStyles = async (styles: ResumeStyles) => {
   const { setStyle } = useStyleStore();
 
-  for (const [key, value] of Object.entries(styles)) {
+  for (const [key, value] of Object.entries(withOptionalLayoutStyles(styles))) {
     await setStyle(key as keyof ResumeStyles, value);
   }
 };

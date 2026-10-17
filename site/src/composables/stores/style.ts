@@ -1,7 +1,8 @@
+import type { OptionalLayoutStyles } from "~/utils/layoutSettings";
 import { copy } from "@renovamen/utils";
 import type { ValidPaperSize, Font } from "~/composables/constant";
 
-export type ResumeStyles = {
+export type ResumeStyles = OptionalLayoutStyles & {
   marginV: number;
   marginH: number;
   lineHeight: number;

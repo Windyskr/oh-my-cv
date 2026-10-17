@@ -76,6 +76,7 @@ let saveTimer: ReturnType<typeof setTimeout>;
 let retryDelay = 2000;
 
 const saveStatus = computed(() => {
+  if (state.value.restoring) return "正在恢复历史版本…";
   if (state.value.conflict || state.value.failed) return state.value.message;
   if (state.value.applying) return "正在同步文件…";
   if (state.value.saving || dirty.value) return "正在自动保存…";

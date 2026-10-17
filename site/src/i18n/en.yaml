@@ -68,8 +68,47 @@ toolbar:
     title: Margins
     vertical: Top & Bottom
     horizontal: Left & Right
-  paragraph_spacing: Paragraph Spacing
+  paragraph_spacing: Section Top Spacing
   line_height: Line Spacing
+
+  heading_spacing:
+    title: Heading Style & Spacing
+    rule_gap: Title to rule
+    content_gap: Below rule
+    reset: Use original styling
+
+  image_position:
+    title: Image Layout
+    photo: Photo
+    logo: University logo
+    horizontal: Horizontal offset
+    vertical: Vertical offset
+    help: Positive values move right or down; negative values move left or up.
+    missing: This image has not been added.
+    reset: Use original settings
+
+  header_layout:
+    title: Header & Personal Info
+  text_spacing:
+    title: Text & Entries
+  layout:
+    value: Value
+    name_font_size: Name font size
+    contact_font_size: Contact font size
+    header_top_gap: Top padding
+    header_min_height: Minimum header height
+    name_contact_gap: Name to contacts
+    header_section_gap: Header to body
+    heading_font_size: Heading font size
+    rule_width: Rule thickness
+    paragraph_after_gap: Paragraph bottom gap
+    list_item_gap: Bullet item gap
+    list_indent: List indentation
+    entry_gap: Entry bottom gap
+    entry_line_height: Entry line spacing
+    width: Width
+    height: Height
+    reset: Use original styling
 
 notification:
   save: Your changes have been saved
@@ -83,3 +122,31 @@ notification:
   import:
     yes: Data has been successfully imported!
     no : Data format is invalid.
+
+history:
+  trigger: "Version History"
+  title: "Resume History"
+  description: "Preview a saved version. Restoring also preserves the version you have now."
+  total: "{count} saved versions"
+  refresh: "Refresh"
+  versions: "Saved versions"
+  loading: "Loading…"
+  empty: "No saved versions yet."
+  current: "Current"
+  more: "Load more"
+  preview: "Version preview"
+  restore: "Restore this version"
+  restoring: "Restoring…"
+  load_failed: "Could not load history. Please try again."
+  restore_failed: "Could not restore this version. Save current edits and try again."
+  conflict: "The local file has changed. Close history and sync the file before restoring."
+  sources:
+    initial: "Initial version"
+    save: "Editor save"
+    external: "File update"
+    restore: "Restored version"
+  fields:
+    name: "Name"
+    markdown: "Content"
+    css: "CSS"
+    styles: "Layout"

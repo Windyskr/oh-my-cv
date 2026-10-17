@@ -1,28 +1,55 @@
 <template>
-  <main id="pdf-export-page">
+  <main id="pdf-export-page" :style="historyId ? { zoom: previewScale } : undefined">
+    <p v-if="renderError" role="alert">{{ renderError }}</p>
     <SharedResumeRender
-      v-if="resume"
+      v-else-if="resume"
       ref="preview"
       id="preview"
       :markdown="resume.markdown"
       :css="resume.css"
       :styles="resume.styles"
     />
+    <p v-else-if="historyId">{{ $t("history.loading") }}</p>
     <p v-else>请通过导出按钮或 pnpm export:pdf 生成 PDF。</p>
   </main>
 </template>
 
 <script lang="ts" setup>
 import type { DbResumeEmpty } from "~/utils/storage/db";
+import type { HistoryVersion } from "~/types/resumeHistory";
 
+const route = useRoute();
+const { t } = useI18n();
+const historyId = computed(() =>
+  typeof route.query.history === "string" ? route.query.history : ""
+);
 const resume = shallowRef<DbResumeEmpty>();
 const preview = ref<{ render: () => Promise<void> }>();
+const renderError = ref("");
+const { width } = useWindowSize();
+const { PAPER } = useConstant();
+const previewScale = computed(() =>
+  Math.min(
+    1,
+    Math.max(
+      0.2,
+      (width.value - 16) / PAPER.sizeToPx(resume.value?.styles.paper || "A4", "w")
+    )
+  )
+);
 
 onMounted(async () => {
-  const snapshot = (window as unknown as { __RESUME_EXPORT__?: DbResumeEmpty })
-    .__RESUME_EXPORT__;
-  if (!snapshot) return;
   try {
+    let snapshot = (window as unknown as { __RESUME_EXPORT__?: DbResumeEmpty })
+      .__RESUME_EXPORT__;
+    if (!snapshot && historyId.value) {
+      const version = await $fetch<HistoryVersion>(
+        `/api/local-resume/history/${encodeURIComponent(historyId.value)}`,
+        { cache: "no-store" }
+      );
+      snapshot = version.resume;
+    }
+    if (!snapshot) return;
     document.documentElement.classList.remove("dark");
     document.title = snapshot.name;
     for (const font of [snapshot.styles.fontEN, snapshot.styles.fontCJK]) {
@@ -47,6 +74,7 @@ onMounted(async () => {
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     document.documentElement.dataset.pdfReady = "true";
   } catch (error) {
+    if (historyId.value) renderError.value = t("history.load_failed");
     document.documentElement.dataset.pdfError =
       error instanceof Error ? error.message : String(error);
   }

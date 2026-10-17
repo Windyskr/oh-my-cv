@@ -68,8 +68,47 @@ toolbar:
     title: Margenes
     vertical: Arriba & Abajo
     horizontal: Izquierdo & Derecho
-  paragraph_spacing: Espaciado de párrafo
+  paragraph_spacing: Espacio sobre sección
   line_height: Espaciado de línea
+
+  heading_spacing:
+    title: Estilo y espaciado de títulos
+    rule_gap: Título a línea
+    content_gap: Debajo de línea
+    reset: Restaurar estilo original
+
+  image_position:
+    title: Diseño de imágenes
+    photo: Foto
+    logo: Logotipo universitario
+    horizontal: Desplazamiento horizontal
+    vertical: Desplazamiento vertical
+    help: Los valores positivos desplazan a la derecha o abajo; los negativos a la izquierda o arriba.
+    missing: No se ha añadido esta imagen.
+    reset: Restaurar ajustes originales
+
+  header_layout:
+    title: Cabecera e información
+  text_spacing:
+    title: Texto y entradas
+  layout:
+    value: Valor
+    name_font_size: Tamaño del nombre
+    contact_font_size: Tamaño del contacto
+    header_top_gap: Relleno superior
+    header_min_height: Altura mínima de cabecera
+    name_contact_gap: Nombre a contacto
+    header_section_gap: Cabecera a contenido
+    heading_font_size: Tamaño del título
+    rule_width: Grosor de línea
+    paragraph_after_gap: Espacio tras párrafo
+    list_item_gap: Espacio entre viñetas
+    list_indent: Sangría de lista
+    entry_gap: Espacio tras entrada
+    entry_line_height: Interlineado de entrada
+    width: Ancho
+    height: Alto
+    reset: Restaurar estilo original
 
 notification:
   save: Cambios Guardados
@@ -83,3 +122,31 @@ notification:
   import:
     yes: Datos importados correctamente!
     no : Formato de datos inválido.
+
+history:
+  trigger: "Historial"
+  title: "Historial del currículum"
+  description: "Previsualiza una versión guardada. La versión actual se conserva al restaurar."
+  total: "{count} versiones guardadas"
+  refresh: "Actualizar"
+  versions: "Versiones guardadas"
+  loading: "Cargando…"
+  empty: "No hay versiones guardadas."
+  current: "Actual"
+  more: "Cargar más"
+  preview: "Vista previa"
+  restore: "Restaurar versión"
+  restoring: "Restaurando…"
+  load_failed: "No se pudo cargar el historial."
+  restore_failed: "No se pudo restaurar. Guarda los cambios y vuelve a intentarlo."
+  conflict: "El archivo local ha cambiado. Sincronízalo antes de restaurar."
+  sources:
+    initial: "Versión inicial"
+    save: "Guardado del editor"
+    external: "Cambio de archivo"
+    restore: "Versión restaurada"
+  fields:
+    name: "Nombre"
+    markdown: "Contenido"
+    css: "CSS"
+    styles: "Diseño"

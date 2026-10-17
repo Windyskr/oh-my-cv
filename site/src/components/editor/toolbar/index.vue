@@ -44,6 +44,10 @@ import {
   EditorToolbarFontSize,
   EditorToolbarMargins,
   EditorToolbarParagraphSpace,
+  EditorToolbarHeadingSpacing,
+  EditorToolbarImagePosition,
+  EditorToolbarHeaderLayout,
+  EditorToolbarTextSpacing,
   EditorToolbarLineHeight,
   EditorToolbarCorrectCase
 } from "#components";
@@ -80,14 +84,34 @@ const tools = [
     component: EditorToolbarMargins
   },
   {
+    id: "header_layout",
+    icon: "i-lucide:contact",
+    component: EditorToolbarHeaderLayout
+  },
+  {
+    id: "image_position",
+    icon: "i-lucide:move",
+    component: EditorToolbarImagePosition
+  },
+  {
     id: "paragraph_spacing",
     icon: "i-icon-park-outline:paragraph-break-two",
     component: EditorToolbarParagraphSpace
   },
   {
+    id: "heading_spacing",
+    icon: "i-icon-park-outline:paragraph-break-two",
+    component: EditorToolbarHeadingSpacing
+  },
+  {
     id: "line_height",
     icon: "i-ic:round-format-line-spacing",
     component: EditorToolbarLineHeight
+  },
+  {
+    id: "text_spacing",
+    icon: "i-lucide:list",
+    component: EditorToolbarTextSpacing
   },
   {
     id: "correct_case",
@@ -113,7 +137,16 @@ const { t } = useI18n();
 
 const getTooltip = (id: string) => {
   const key = `toolbar.${id}`;
-  return ["file", "correct_case", "font_family", "margins"].includes(id)
+  return [
+    "file",
+    "correct_case",
+    "font_family",
+    "margins",
+    "heading_spacing",
+    "image_position",
+    "header_layout",
+    "text_spacing"
+  ].includes(id)
     ? t(`${key}.title`)
     : t(key);
 };

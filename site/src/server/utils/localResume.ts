@@ -2,10 +2,14 @@ import { readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
 import type { DbResumeEmpty, StorageJson } from "../../utils/storage/db";
+import { localResumeDirectory as directory } from "./localResumePaths";
+import { recordResumeHistory } from "./resumeHistory";
+import type { HistorySource } from "../../types/resumeHistory";
 
 export type LocalResume = DbResumeEmpty;
 
-const directory = resolve(process.cwd(), "../resumes");
+const resumeRevision = (resume: LocalResume) =>
+  createHash("sha256").update(JSON.stringify(resume)).digest("hex");
 let queue = Promise.resolve();
 
 export const withLocalResume = <T>(operation: () => Promise<T>): Promise<T> => {
@@ -26,11 +30,19 @@ export const readLocalResume = async () => {
   const json = JSON.parse(settings) as StorageJson;
   const saved = Object.values(json.data)[0] as LocalResume;
   const resume = { name: saved.name, markdown, css, styles: saved.styles };
-  const revision = createHash("sha256").update(JSON.stringify(resume)).digest("hex");
+  const revision = resumeRevision(resume);
+  await recordResumeHistory(resume, revision, "external");
   return { resume, revision, json };
 };
 
-export const writeLocalResume = async (resume: LocalResume, json: StorageJson) => {
+export const writeLocalResume = async (
+  resume: LocalResume,
+  json: StorageJson,
+  source: HistorySource = "save",
+  restoredFrom?: string
+) => {
+  // Save the complete target snapshot before changing any of the working files.
+  await recordResumeHistory(resume, resumeRevision(resume), source, restoredFrom);
   const saved = Object.values(json.data)[0] as LocalResume & { updated_at: string };
   Object.assign(saved, resume, { updated_at: new Date().toISOString() });
   const files = [

@@ -1,42 +1,46 @@
 <template>
   <EditorToolbarBox :text="$t('toolbar.margins.title')" icon="i-radix-icons:margin">
-    <div hstack text-muted-foreground gap-x-1 justify-end>
-      <span i-icon-park-outline:margin-one />
-      {{ $t("toolbar.margins.vertical") }}
-    </div>
-
+    <SharedUiNumberField
+      id="margin-vertical-value"
+      :label="$t('toolbar.margins.vertical')"
+      :model-value="styles.marginV"
+      :min="0"
+      :max="100"
+      :step="0.1"
+      @update:model-value="(value) => setStyle('marginV', value)"
+    />
     <SharedUiSlider
       unit="px"
-      :model-value="vModelValue"
-      @update:model-value="
-        (value) => {
-          vModelValue = value!;
-          setStyle('marginV', value!.at(0)!);
-        }
-      "
+      :model-value="[styles.marginV]"
+      :min="0"
+      :max="100"
+      :step="0.1"
+      @update:model-value="(value) => update('marginV', value)"
     />
-
-    <div mt-4 hstack text-muted-foreground gap-x-1 justify-end>
-      <span i-icon-park-outline:margin />
-      {{ $t("toolbar.margins.horizontal") }}
+    <div class="mt-4">
+      <SharedUiNumberField
+        id="margin-horizontal-value"
+        :label="$t('toolbar.margins.horizontal')"
+        :model-value="styles.marginH"
+        :min="0"
+        :max="100"
+        :step="0.1"
+        @update:model-value="(value) => setStyle('marginH', value)"
+      />
+      <SharedUiSlider
+        unit="px"
+        :model-value="[styles.marginH]"
+        :min="0"
+        :max="100"
+        :step="0.1"
+        @update:model-value="(value) => update('marginH', value)"
+      />
     </div>
-
-    <SharedUiSlider
-      unit="px"
-      :model-value="hModelValue"
-      @update:model-value="
-        (value) => {
-          hModelValue = value!;
-          setStyle('marginH', value!.at(0)!);
-        }
-      "
-    />
   </EditorToolbarBox>
 </template>
-
 <script lang="ts" setup>
 const { styles, setStyle } = useStyleStore();
-
-const vModelValue = ref([styles.marginV]);
-const hModelValue = ref([styles.marginH]);
+const update = (key: "marginV" | "marginH", value?: number[]) => {
+  if (value?.[0] !== undefined) void setStyle(key, value[0]);
+};
 </script>

@@ -11,6 +11,7 @@
 </template>
 
 <script lang="ts" setup>
+import { layoutFieldKeys } from "~/utils/layoutSettings";
 import { useSmartPages } from "@ohmycv/vue-smart-pages";
 import type { ResumeStyles } from "~/composables/stores/style";
 
@@ -50,6 +51,7 @@ watchThrottled(
   () => [
     props.styles.lineHeight,
     props.styles.paragraphSpace,
+    ...layoutFieldKeys.map((key) => props.styles[key]),
     props.styles.fontSize,
     props.css,
     props.styles.fontCJK,
