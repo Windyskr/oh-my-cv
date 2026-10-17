@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const localBuild = process.env.RESUME_LOCAL_BUILD === "1";
 const localFeatures = localBuild || process.env.NODE_ENV !== "production";
+const siteUrl = process.env.NUXT_SITE_URL || "https://ohmycv.app";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -14,6 +15,16 @@ export default defineNuxtConfig({
   nitro: localBuild
     ? { output: { dir: fileURLToPath(new URL("./.output-local", import.meta.url)) } }
     : {},
+
+  hooks: {
+    "pages:extend"(pages) {
+      if (localFeatures) return;
+      for (let index = pages.length - 1; index >= 0; index--) {
+        if (/\/pages\/(local|pdf-render)\.vue$/.test(pages[index].file || ""))
+          pages.splice(index, 1);
+      }
+    }
+  },
 
   modules: [
     "@vueuse/nuxt",
@@ -64,14 +75,14 @@ export default defineNuxtConfig({
         { name: "application-name", content: "Oh My CV!" },
         { name: "apple-mobile-web-app-title", content: "Oh My CV!" },
         { name: "msapplication-TileColor", content: "#fff" },
-        { property: "og:url", content: "https://ohmycv.app" },
+        { property: "og:url", content: siteUrl },
         { property: "og:type", content: "website" }
       ]
     }
   },
 
   site: {
-    url: "https://ohmycv.app"
+    url: siteUrl
   },
 
   sitemap: { enabled: !localFeatures },

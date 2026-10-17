@@ -98,6 +98,27 @@ Token 默认仅保存在当前页面内存，关闭或刷新页面后需要重�
 
 Secret Gist 持有链接即可访问，请妥善保管链接。同步不包含历史记录；图片需要嵌入正文或使用其他设备也能访问的图片地址。大型 Gist 文件通过 GitHub 返回的原始文件地址读取，原始文件请求不携带 Token。
 
+## Cloudflare Pages 部署
+
+```bash
+pnpm build:cloudflare
+pnpm dlx wrangler@4.151.1 pages deploy
+```
+
+`wrangler.toml` 使用项目名称 `ohmycv-windyskr`，上传目录为 `site/.output/public`。已登录 Wrangler 时也可以运行 `pnpm deploy:cloudflare` 完成构建与上传。Cloudflare 登录信息从本机 Wrangler 配置读取，代码中不保存令牌。
+
+首次创建 Pages 项目：
+
+```bash
+pnpm dlx wrangler@4.151.1 pages project create ohmycv-windyskr --production-branch main --force
+```
+
+Cloudflare Git 构建使用仓库根目录，构建命令填写 `pnpm build:cloudflare`，输出目录填写 `site/.output/public`，pnpm 版本使用 `9.4.0`。Node.js 版本由 `.node-version` 指定。已有的 Direct Upload 项目可以继续通过 Wrangler 上传。
+
+云端构建会移除本地文件编辑和历史预览页面，隐藏“本地简历”入口，并为各语言的 `/editor/*` 路径生成客户端路由回退规则。简历正文、CSS、排版设置和 Gist 同步在浏览器中使用，PDF 通过浏览器打印导出；本地文件历史记录与后台 PDF 导出继续通过本地服务使用。
+
+构建时可通过 `NUXT_SITE_URL` 指定站点地址；默认使用 `https://ohmycv-windyskr.pages.dev`，Pages Git 构建也会读取 `CF_PAGES_URL`。构建会更新站点元信息、站点地图和 `robots.txt`，并移除上游 GitHub Pages 的 `CNAME`。个人简历源文件和本地历史记录均不包含在上传目录中。
+
 ## 后台导出 PDF
 
 ```bash
