@@ -136,5 +136,30 @@ export const useLocalResume = () => {
     }
   };
 
-  return { state, content, dirty, matches, apply, save, restoreHistory };
+  const importResume = async (resume: DbResumeEmpty) => {
+    if (!(await save()) || state.value.conflict || state.value.applying) return false;
+    state.value.saving = true;
+    try {
+      const saved = await $fetch<LocalResume>("/api/local-resume", {
+        method: "PUT",
+        timeout: 15000,
+        retry: false,
+        body: { ...resume, revision: state.value.revision }
+      });
+      await apply(saved);
+      state.value.message = "已从 Gist 下载并保存到本地文件";
+      return true;
+    } catch (error) {
+      const failure = error as { statusCode?: number; response?: { status: number } };
+      if (failure.statusCode === 409 || failure.response?.status === 409) {
+        state.value.conflict = true;
+        state.value.message = "本地文件已有新修改，请同步文件后再下载 Gist。";
+      }
+      return false;
+    } finally {
+      state.value.saving = false;
+    }
+  };
+
+  return { state, content, dirty, matches, apply, save, restoreHistory, importResume };
 };

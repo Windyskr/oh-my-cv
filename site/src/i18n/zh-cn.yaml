@@ -56,7 +56,7 @@ toolbar:
     note:
       title: 解释
       content: 不会修正全为大写或小写字母的单词（如“GITHUB”或“github”）。
-    btn : 修正
+    btn: 修正
   paper_size: 纸张尺寸
   theme_color: 主题色
   font_family:
@@ -118,10 +118,10 @@ notification:
   duplicate: 已创建简历 "{old}" 的副本 "{new}"
   correct:
     yes: 成功修正 {num} 个单词
-    no : 您的所有拼写都是正确的！
+    no: 您的所有拼写都是正确的！
   import:
     yes: 已成功导入数据！
-    no : 数据格式不正确
+    no: 数据格式不正确
 
 history:
   trigger: "历史记录"
@@ -150,3 +150,37 @@ history:
     markdown: "正文"
     css: "CSS 样式"
     styles: "排版设置"
+
+gist:
+  title: GitHub Gist 同步
+  description: 同步当前简历的正文、CSS 和全部排版设置。
+  create_token: 在 GitHub 创建 Token
+  token_help: Classic Token 只需勾选 gist；Fine-grained Token 需要 Gists 读写权限。Token 仅发送给 GitHub。
+  remember: 在此浏览器记住 Token（以明文保存在浏览器本地）
+  address: Gist 地址或 ID
+  address_help: 首次上传留空会创建 Secret Gist；其他设备填写相同地址即可下载。
+  secret_help: Secret Gist 持有链接即可访问，请妥善保管简历链接。同步不包含历史记录；图片需嵌入正文或使用可访问的图片地址。
+  upload: 上传到 Gist
+  download: 从 Gist 下载
+  forget: 清除同步设置
+  working: 正在同步，请稍候…
+  open: 在 GitHub 查看 Gist
+  uploaded: 已上传完整简历。复制 Gist 地址即可在其他设备同步。
+  downloaded: 已从 Gist 下载并保存。
+  confirm_download: 确认后将替换当前正文、CSS 和排版设置。本地文件模式会保留历史记录，普通编辑模式会保留一份简历副本。
+  replace: 确认替换当前简历
+  cancel: 取消
+  confirm_upload: 上传将覆盖这个 Gist 中的简历文件，是否继续？
+  confirm_public_upload: 这是公开 Gist，上传后的简历任何人都可以查阅。是否继续上传？
+  errors:
+    invalid_id: 请输入有效的 gist.github.com 地址或 Gist ID。
+    token_required: 请填写具有 Gist 写入权限的 GitHub Token。
+    unauthorized: Token 无效或已经过期，请重新创建。
+    forbidden: GitHub 拒绝请求，请检查 Gist 读写权限以及 API 请求限额。
+    not_found: 没有找到 Gist，请检查地址和 Token 的访问权限。
+    request_failed: 同步失败，当前简历仍然保留，请稍后重试。
+    network: 无法连接 GitHub 或请求超时，请检查网络后重试。
+    invalid_data: Gist 中的简历格式不受支持或内容无效，当前简历没有修改。
+    missing_file: Gist 中没有 resume.ohmycv.json，请先通过本应用上传。
+    local_save: 本地保存失败或存在文件冲突，请先处理保存状态，再重新同步。
+    storage: 浏览器无法保存同步设置，重新打开页面后需要再次填写。

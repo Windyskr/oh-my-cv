@@ -56,7 +56,7 @@ toolbar:
     note:
       title: Note
       content: Words that are only in uppercase or lowercase ("GITHUB" or "github") will be left untouched.
-    btn : Correct it!
+    btn: Correct it!
   paper_size: Paper Size
   theme_color: Theme Color
   font_family:
@@ -118,10 +118,10 @@ notification:
   duplicate: Created resume "{old}"'s duplication "{new}"
   correct:
     yes: Corrected {num} words
-    no : All case are correct!
+    no: All case are correct!
   import:
     yes: Data has been successfully imported!
-    no : Data format is invalid.
+    no: Data format is invalid.
 
 history:
   trigger: "Version History"
@@ -150,3 +150,37 @@ history:
     markdown: "Content"
     css: "CSS"
     styles: "Layout"
+
+gist:
+  title: GitHub Gist Sync
+  description: Sync this resume's Markdown, CSS and all layout settings.
+  create_token: Create a token on GitHub
+  token_help: Classic tokens need the gist scope; fine-grained tokens need Gists read and write permission. The token is sent only to GitHub.
+  remember: Remember token in this browser (stored locally as plain text)
+  address: Gist URL or ID
+  address_help: Leave blank to create a secret Gist on first upload. Use the same URL on another device to download.
+  secret_help: Anyone with a secret Gist link can access it. Keep your link safe. History is excluded; embed images or use accessible image URLs.
+  upload: Upload to Gist
+  download: Download from Gist
+  forget: Clear sync settings
+  working: Syncing, please wait…
+  open: View Gist on GitHub
+  uploaded: Full resume uploaded. Copy the Gist URL to sync on another device.
+  downloaded: Resume downloaded and saved.
+  confirm_download: This replaces the current Markdown, CSS and layout settings. Local file mode keeps history; the regular editor keeps a resume copy.
+  replace: Replace current resume
+  cancel: Cancel
+  confirm_upload: This will overwrite the resume file in this Gist. Continue?
+  confirm_public_upload: This Gist is public. Anyone will be able to view your uploaded resume. Continue?
+  errors:
+    invalid_id: Enter a valid gist.github.com URL or Gist ID.
+    token_required: Enter a GitHub token with Gist write permission.
+    unauthorized: The token is invalid or expired. Please create a new one.
+    forbidden: GitHub rejected the request. Check Gist permissions and API rate limits.
+    not_found: Gist not found. Check its URL and your token's access.
+    request_failed: Sync failed. Your current resume is preserved. Please retry later.
+    network: Cannot connect to GitHub or the request timed out. Check your connection.
+    invalid_data: The Gist resume format or content is invalid. Your current resume is unchanged.
+    missing_file: This Gist has no resume.ohmycv.json. Upload with this app first.
+    local_save: Saving failed or local files have conflicting changes. Resolve the save status and retry.
+    storage: Your browser could not store sync settings. Enter them again after reloading.

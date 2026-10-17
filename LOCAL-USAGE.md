@@ -84,6 +84,20 @@ tmux new-session -d -s ohmycv-local 'pnpm start --host 127.0.0.1 --port 3000 > l
 
 预览历史版本不会修改当前编辑内容。历史记录仅适用于 `/local` 的本地文件简历。
 
+## GitHub Gist 同步
+
+右侧“文件 → GitHub Gist 同步”可以上传和下载当前简历，包括正文、CSS、名称和全部排版设置。本地文件编辑页与普通编辑页均可使用，通过浏览器直接请求 GitHub API。
+
+1. 点击“在 GitHub 创建 Token”。Classic Token 只需选择 `gist` 权限；Fine-grained Token 需要 Gists 读写权限。
+2. 填入 Token，首次上传时将 Gist 地址留空，点击“上传到 Gist”创建 Secret Gist。后续上传更新同一个 Gist，覆盖前需要确认；公开 Gist 会明确提示公开状态。
+3. 在其他设备填写 Token 和相同的 Gist 地址或 ID，点击“从 Gist 下载”。检查简历名称后，点击“确认替换当前简历”。
+
+Gist 中使用 `resume.ohmycv.json` 保存完整简历，其他文件保持原样。下载时验证数据格式，本地文件模式先保存当前编辑并保留历史；普通编辑模式先保存当前编辑，再创建简历副本。保存失败或出现本地文件冲突时停止替换。
+
+Token 默认仅保存在当前页面内存，关闭或刷新页面后需要重新填写。勾选“在此浏览器记住 Token”会将其以明文保存在浏览器本地；取消勾选或点击“清除同步设置”可删除保存的 Token。Token 仅发送给 `api.github.com`，不进入简历、Gist 内容、本地文件和版本历史。
+
+Secret Gist 持有链接即可访问，请妥善保管链接。同步不包含历史记录；图片需要嵌入正文或使用其他设备也能访问的图片地址。大型 Gist 文件通过 GitHub 返回的原始文件地址读取，原始文件请求不携带 Token。
+
 ## 后台导出 PDF
 
 ```bash

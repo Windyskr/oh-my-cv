@@ -56,7 +56,7 @@ toolbar:
     note:
       title: Nota
       content: No se modificarán las palabras que sólo contengan mayúsculas o minúsculas ("GITHUB" or "github").
-    btn : Corrígelo!
+    btn: Corrígelo!
   paper_size: Tamaño de hoja
   theme_color: Color y tema
   font_family:
@@ -118,10 +118,10 @@ notification:
   duplicate: Created resume "{old}"'s duplication "{new}"
   correct:
     yes: Corregidos {num} palabras
-    no : Buen trabajo, no hubo nada que corregir!
+    no: Buen trabajo, no hubo nada que corregir!
   import:
     yes: Datos importados correctamente!
-    no : Formato de datos inválido.
+    no: Formato de datos inválido.
 
 history:
   trigger: "Historial"
@@ -150,3 +150,37 @@ history:
     markdown: "Contenido"
     css: "CSS"
     styles: "Diseño"
+
+gist:
+  title: Sincronizar con GitHub Gist
+  description: Sincroniza Markdown, CSS y todos los ajustes de formato del currículum.
+  create_token: Crear un token en GitHub
+  token_help: Los tokens clásicos necesitan el permiso gist; los tokens detallados necesitan lectura y escritura de Gists. El token solo se envía a GitHub.
+  remember: Recordar el token en este navegador (guardado localmente como texto sin cifrar)
+  address: URL o ID del Gist
+  address_help: Déjalo vacío para crear un Gist secreto. Usa la misma URL en otro dispositivo para descargarlo.
+  secret_help: Cualquiera con el enlace puede acceder a un Gist secreto. Conserva el enlace con cuidado. El historial no se sincroniza; incorpora las imágenes o usa URL accesibles.
+  upload: Subir a Gist
+  download: Descargar de Gist
+  forget: Borrar ajustes
+  working: Sincronizando…
+  open: Ver Gist en GitHub
+  uploaded: Currículum subido. Copia la URL para sincronizar en otro dispositivo.
+  downloaded: Currículum descargado y guardado.
+  confirm_download: Se reemplazarán Markdown, CSS y formato. El modo local conserva el historial; el editor normal conserva una copia.
+  replace: Reemplazar currículum actual
+  cancel: Cancelar
+  confirm_upload: Se sobrescribirá el archivo del currículum en este Gist. ¿Continuar?
+  confirm_public_upload: Este Gist es público. Cualquiera podrá ver tu currículum. ¿Continuar?
+  errors:
+    invalid_id: Introduce una URL de gist.github.com o un ID válido.
+    token_required: Introduce un token de GitHub con permiso de escritura de Gists.
+    unauthorized: El token no es válido o ha caducado. Crea otro.
+    forbidden: GitHub rechazó la solicitud. Revisa los permisos y los límites de la API.
+    not_found: No se encontró el Gist. Revisa la URL y el acceso del token.
+    request_failed: Falló la sincronización. Se conserva el currículum actual. Inténtalo más tarde.
+    network: No se pudo conectar con GitHub o se agotó el tiempo. Revisa la conexión.
+    invalid_data: El formato o contenido no es válido. Se conserva el currículum actual.
+    missing_file: No existe resume.ohmycv.json en este Gist. Súbelo desde esta aplicación.
+    local_save: Falló el guardado o hay conflictos locales. Resuélvelos y vuelve a intentarlo.
+    storage: El navegador no pudo guardar los ajustes. Introdúcelos de nuevo al recargar.

@@ -126,7 +126,12 @@ export class StorageService {
       // TODO: Use toast to show error message
       console.error(`Switch error: Resume ${id} not found.`);
     } else {
-      const { id, updated_at, created_at, ...duplicated } = data!;
+      const duplicated: DbResumeEmpty = {
+        name: data.name,
+        markdown: data.markdown,
+        css: data.css,
+        styles: data.styles
+      };
 
       const { data: duplicatedData, error: createError } = await this._db.create({
         ...duplicated,
@@ -140,6 +145,7 @@ export class StorageService {
         const toast = useToast();
         toast.duplicate(duplicatedData!.name);
       }
+      return duplicatedData;
     }
   }
 
